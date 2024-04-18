@@ -25,4 +25,7 @@ None
 ## Note
 
 typed in feature_test branch2!!
+
 typed in feature_test Conflict2!!
+
+typed in origin master!!
