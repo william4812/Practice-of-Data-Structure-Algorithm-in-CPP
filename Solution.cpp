@@ -1,20 +1,4 @@
-#include <string>
-#include <iostream>
-#include <cstdlib>
-#include <unordered_map>
-#include <math.h>       /* log10 */
-#include <bits/stdc++.h> /*MAX_INT ; MIN_INT*/
-#include <numeric>      // std::accumulate
-#include <vector>
 #include "Solution.h"
-#include <utility>      // std::pair, std::make_pair
-#include <stdlib.h>     /* atoi */ 
-#include <typeinfo>
-#include <assert.h>     /* assert */
-#include <cstdio>       // printf
-#include <queue>        // priority_queue
-#include <algorithm>    // max_element, count
-#include <random>       // random_device
 
 using namespace std;
 /*S: Solution*/
@@ -32,6 +16,10 @@ using namespace STWO;
 using namespace STHREE;
 using namespace STREE;
 using namespace SHUFFLE;
+
+
+
+
 
 bool STHREE::hasCycle(STHREE::ListNode* head) {
   if (!head /*empty node*/ || !(head->next) /*single node*/)
@@ -188,20 +176,12 @@ vector<int> S::Solution::distributeCandies(int candies, int num_people) {
  *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
  * };
  */
+/*
 S::TreeNode* S::Solution::pruneTree(TreeNode* root) {
     return nullptr;        
 }
+*/
 
-double S::Solution::champagneTower(int poured, int query_row, int query_glass) {
-/*--------------------------------------
-We stack glasses in a pyramid, where the first row has 1 glass, the second row has 2 glasses, and so on until the 100th row.  Each glass holds one cup of champagne.
-
-Then, some champagne is poured into the first glass at the top.  When the topmost glass is full, any excess liquid poured will fall equally to the glass immediately to the left and right of it.  When those glasses become full, any excess champagne will fall equally to the left and right of those glasses, and so on.  (A glass at the bottom row has its excess champagne fall on the floor.)
-
-For example, after one cup of champagne is poured, the top most glass is full.  After two cups of champagne are poured, the two glasses on the second row are half full.  After three cups of champagne are poured, those two cups become full - there are 3 full glasses total now.  After four cups of champagne are poured, the third row has the middle glass half full, and the two outside glasses are a quarter full, as pictured below.
--------------------------------------- */
-    return 0.0;
-}
 
 int S::Solution::maxProfit(vector<int>& prices) {
 /*-----------------------------------------------
@@ -217,9 +197,11 @@ Find and return the maximum profit you can achieve.
     return prof;
 }
 
+/*
 int S::Solution::minimumDifference(vector<int>& nums) {
     return 1;
 }
+*/
 
 int S::Solution::mySqrt(int& x) {
     int nth = 2; //for square root
@@ -260,9 +242,12 @@ double S::Solution::nthX(int nth, double x) {
     return x*nthX(nth-1, x);
 }
 
+/*
 int S::Solution::maxResult(vector<int>& nums, int k) {
     return nums.size();
 }
+*/
+
 int S::Solution::minimumHammingDistance(vector<int>& src, vector<int>& tgt, vector<vector<int>>& aSwaps /*allowed swap*/) {
     assert(src.size() == tgt.size());
     //cout << boolalpha <<  (src.size() == tgt.size()) << endl;
@@ -552,12 +537,14 @@ bool S::Solution::hasAllCodes(std::string& s, int& k) { //time out in leetcode, 
     return false;
 }
 
+/*
 int S::Solution::biToInt(vector<char>::iterator& i, vector<char>::iterator& e) {
     //for (vector<char>::iterator& it=i; it < e ; ++it) {
     //    cout << *it << endl; 
     //}
     return 1;
 }
+*/
 
 int S::Solution::biToInt(std::string& s, int& k, int& ini) {
     int tmp = 0;
@@ -720,6 +707,7 @@ Return the number of car fleets that will arrive at the destination.
  */
 }
 
+/*
 S::ListNode* S::LinkedList::findNode(int v, LinkedList iL) {
     ListNode* nTemp = first;
     
@@ -733,6 +721,7 @@ S::ListNode* S::LinkedList::findNode(int v, LinkedList iL) {
     }
     return nullptr;
 }
+*/
 
 void S::LinkedList::deleteNode(ListNode* node) {
     ListNode* p = node->nxt;
@@ -1223,9 +1212,11 @@ int S::Solution::dfs(int i, int j, int left, \
 
 }
 
+/*
 bool S::Solution::compareNums(const int& ix, const int& iy) {
   return true;
 }
+*/
 
 vector<int> S::Solution::numberGame(vector<int>& nums) {
   if (nums.size() % 2 != 0 /*odd number of elements*/) {
@@ -1831,6 +1822,8 @@ vector<int> S::Solution::searchRange(vector<int>& nums, int target) {
 
 }
 
+/*
 vector<int> S::Solution::inorderTraversal(TreeNode* root) {
   return {};
 }
+*/

@@ -1,10 +1,7 @@
 #include <iostream>
-#include <cstdio>     // printf
-#include <vector>
-#include "Solution.h"
 #include <thread>
-#include <algorithm>  // max_element
-#include <numeric>    // accumulate, reduce
+
+#include "Solution.h"
 
 using namespace std;
 using S::Solution;
@@ -37,8 +34,16 @@ int diff(int a, int b) {
   return a-b;
 }
 
+int testArrayLikeDsAlg() {
+  //DSALG::ArrayLikeDsAlg<int> aLDA;
+  //aLDA.insertionSort(arr);
+  return 0;
+}
+
 int main() {
-  Solution s;
+  assert(testArrayLikeDsAlg()==0);
+
+  //Solution s;
   /*
   Solution s;
   //vector<int> n{5,7,7,8,8,10}; int t = 8; //test 1, {3, 4}

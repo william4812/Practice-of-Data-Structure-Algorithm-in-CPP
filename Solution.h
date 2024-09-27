@@ -1,31 +1,44 @@
+#include <algorithm> /* max_element, count */
+#include <assert.h> /* assert */
+#include <cstdio> /* printf */
+#include <cstdlib>
+#include <bits/stdc++.h> /* MAX_INT ; MIN_INT */
 #include <iostream>
+#include <math.h> /* log10 */
+#include <numeric> /* std::accumulate */
+#include <queue> /* priority_queue */
+#include <random> /* random_device */
+#include <stdlib.h> /* atoi */
+#include <string>
+#include <typeinfo>
+#include <unordered_map>
+#include <utility> /* std::pair, std::make_pair */
 #include <vector>
-#include <utility>      // std::pair, std::make_pair
+
 using namespace std;
 
 #ifndef HEADER_H_SOLUTION
 #define HEADER_H_SOLUTION
 
+
+
+namespace DSALG{
+  template <typename T>
+  class ArrayLikeDsAlg {
+  public:
+    void insertionSort(T arr[]);
+
+  private:
+
+  };
+}
+
+
+
 namespace T {
   bool uTest(vector<int>& vT, int& ans);
 }
 
-/*
-namespace C {
-  int (*fPtr)(int a, int b);  //function pointer
-                              //
-  class Functor{
-  public:
-    int _factor;
-  public:
-    Functor(int factor):_factor(factor) {};
-    int sum(int a, int b);
-    int multi(int m);
-
-
-  };
-}
-*/
 
 namespace T {
   class Thrd{
