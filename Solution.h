@@ -1,10 +1,11 @@
-#include <algorithm> /* max_element, count */
+#include <algorithm> /* max_element, count, copy */
 #include <assert.h> /* assert */
 #include <cstdio> /* printf */
 #include <cstdlib>
 #include <bits/stdc++.h> /* MAX_INT ; MIN_INT */
 #include <iostream>
 #include <math.h> /* log10 */
+#include <memory> /* auto_ptr */
 #include <numeric> /* std::accumulate */
 #include <queue> /* priority_queue */
 #include <random> /* random_device */
@@ -12,7 +13,7 @@
 #include <string>
 #include <typeinfo>
 #include <unordered_map>
-#include <utility> /* std::pair, std::make_pair */
+#include <utility> /* std::pair, std::make_pair, move */
 #include <vector>
 
 using namespace std;
@@ -31,6 +32,13 @@ namespace DSALG{
     void bubbleSort(T arr[], const int& arrSize);
     void insertionSort(T arr[], const int& arrSize);
     void mergeSort(T arr[], const int& arrSize);
+    void runMergeSort(T arr[], 
+        const int& leftIndex, 
+        const int& rightIndex);
+    void merge(T arr[], 
+        const int& leftIndex, 
+        const int& midIndex,
+        const int& rightIndex);
     void heapSort(T arr[]);
     void quickSort(T arr[]);
     
@@ -58,17 +66,98 @@ namespace DSALG{
 
     for (auto i=1; i<arrSize; ++i) {
       T key = arr[i];
-      auto j = i-1;
+      auto j = i-1; // iniital index j for arr[0:i-1]
       /* check if key is smaller than arr[j] */
       while (j>=0 and arr[j] > key) {
         /* move arr[j] to the arr[j+1] next to j, 
-         * then j-- yields j-1 for next iteration
+         * then j-- means moving to j-1 for next iteration
          * */
         arr[j+1] = arr[j];
         --j; 
       }
-      arr[++j]=key; // set key to final position in A[1:i]
+      /* set key to final position at j, which yields
+       * a Sorted subarray A[0:i] */
+      arr[++j]=key; 
     }
+  };
+  
+  /* Merge sort runs O(nlog n) time complexity */
+  template <typename T>
+  void ArrayLikeDsAlg<T>::mergeSort(T arr[], const int& arrSize){
+    /* empty of single element array */
+    if (arrSize <= 1) return;
+      
+    /* running merge sort algorithm */
+    runMergeSort(arr, 0, arrSize-1);
+
+  };
+  
+  /* helper function */
+  template <typename T>
+  void ArrayLikeDsAlg<T>::runMergeSort(T arr[],
+     const int& leftIndex,
+     const int& rightIndex) {
+    /* Check index */
+    if (leftIndex >= rightIndex) return;
+      
+    /* Divide and conquer recurrsively subarrays */
+    int midIndex = leftIndex + 0.5*(rightIndex-leftIndex);
+    runMergeSort(arr, leftIndex, midIndex);
+    runMergeSort(arr, midIndex+1, rightIndex);
+
+    /* Merge the subarrays */
+    merge(arr, leftIndex, midIndex, rightIndex);
+  };
+  
+  
+  /* helper function of merging subarrays */
+  template <typename T>
+  void ArrayLikeDsAlg<T>::merge(T arr[],
+     const int& leftIndex,
+     const int& midIndex,
+     const int& rightIndex) {
+    
+    auto leftArrSize = midIndex-leftIndex+1;
+    auto rightArrSize = rightIndex-midIndex;
+
+    /* allocate memory for subarrays */
+    T* leftArr = new T[leftArrSize];
+    T* rightArr = new T[rightArrSize];
+    
+    /* assign left subarray */
+    std::copy(arr+leftIndex, arr+midIndex+1, leftArr);
+    
+    /* assign right subarray */
+    std::copy(arr+(midIndex+1), arr+rightIndex+1, rightArr);
+
+    auto arrIndex = leftIndex; // index for filling original arr
+    auto tempLeftIndex = 0;
+    auto tempRightIndex = 0;
+    while (tempLeftIndex < leftArrSize and 
+           tempRightIndex < rightArrSize ) {
+      /* compare smaller element from both subarrays*/
+      if (leftArr[tempLeftIndex] < rightArr[tempRightIndex]) {
+        arr[arrIndex++] = move(leftArr[tempLeftIndex++]);
+      } else {
+        arr[arrIndex++] = move(rightArr[tempRightIndex++]);
+      }
+    }
+
+    /* fill any elements left in subarrays */
+    if (tempLeftIndex < leftArrSize) {
+      copy(leftArr+tempLeftIndex,
+           leftArr+leftArrSize,
+           arr+arrIndex); 
+    } 
+    if (tempRightIndex < (rightIndex-midIndex)) { 
+      copy(rightArr+tempRightIndex,
+           rightArr+rightArrSize,
+           arr+arrIndex); 
+    }
+    
+    /* deallocate memory pointed by ptr */
+    delete[] leftArr;
+    delete[] rightArr;
   };
   
   /* Show array elements */ 

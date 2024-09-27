@@ -39,24 +39,26 @@ int testArrayLikeDsAlg() {
   
   int arrI[] {1, 22, 321, 4567, -4, -15};
   int arrSize = sizeof(arrI)/sizeof(int);
-  printf("Array of integers");
-  printf("before sort...");
+  printf("Array of integers\n");
+  printf("before sort...\n");
   aLDAi.showArray(arrI, arrSize);
   //aLDAi.bubbleSort(arrI, arrSize);
-  aLDAi.insertionSort(arrI, arrSize);
-  printf("after sort...");
-  aLDAi.showArray(arrI, arrSize);
+  //aLDAi.insertionSort(arrI, arrSize);
+  aLDAi.mergeSort(arrI, arrSize);
+  printf("after sort...\n");
+  aLDAi.showArray(arrI, arrSize); // -15 -4 1 22 321 4567
   
   DSALG::ArrayLikeDsAlg<double> aLDAd;
   double arrD[] {1.9, 3.1, 1.99, -321.3, 4567.6, -4.001, 15.56};
   arrSize = sizeof(arrD)/sizeof(double);
-  printf("Array of doubles");
-  printf("before sort...");
+  printf("Array of doubles\n");
+  printf("before sort...\n");
   aLDAd.showArray(arrD, arrSize);
   //aLDAd.bubbleSort(arrD, arrSize);
-  aLDAd.insertionSort(arrD, arrSize);
-  printf("after sort...");
-  aLDAd.showArray(arrD, arrSize);
+  //aLDAd.insertionSort(arrD, arrSize);
+  aLDAd.mergeSort(arrD, arrSize);
+  printf("after sort...\n");
+  aLDAd.showArray(arrD, arrSize); // -321.3 -4.001 1.9 1.99 3.1 15.56 4567.6
   
   return 0;
 }
