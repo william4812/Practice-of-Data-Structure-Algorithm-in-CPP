@@ -258,6 +258,8 @@ namespace S {
         bool isBadVersion(const int n);
 
         vector<int> searchRange(vector<int>& nums, int target);
+
+        vector<int> inorderTraversal(TreeNode* root);
     }; // class Solution
 }
 

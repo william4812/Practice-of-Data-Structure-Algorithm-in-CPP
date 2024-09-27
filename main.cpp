@@ -39,6 +39,8 @@ int diff(int a, int b) {
 
 int main() {
   Solution s;
+  /*
+  Solution s;
   //vector<int> n{5,7,7,8,8,10}; int t = 8; //test 1, {3, 4}
   //vector<int> n{5,7,7,8,8,10}; int t = 6; //test 2, {-1, -1}
   //vector<int> n{}; int t = 0; //test 3, {-1, -1}
@@ -46,7 +48,8 @@ int main() {
   cout << "testing..." << endl;
   vector<int> ans = s.searchRange(n, t);
   s.print1Dvector(ans); 
-
+  */
+  
   /*
   Solution s;
    

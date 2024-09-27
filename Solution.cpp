@@ -1828,4 +1828,9 @@ vector<int> S::Solution::searchRange(vector<int>& nums, int target) {
 
   // return [-1, -1] if target is found
   return {-1,1};
+
+}
+
+vector<int> S::Solution::inorderTraversal(TreeNode* root) {
+  return {};
 }
