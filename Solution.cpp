@@ -90,11 +90,11 @@ STWO::ListNode* STWO::LinkedList::reverseList(ListNode* head) {
   ListNode* nextN;
   ListNode* prevN=nullptr;
   while (head != nullptr) {
-    nextN = head->next;
-    head->next = prevN;
+    nextN = head->_next;
+    head->_next = prevN;
     
     prevN = head;
-    cout << prevN->val << "\n";
+    cout << prevN->_val << "\n";
     head = nextN;
     
     //cout << head->val << "\n";
@@ -107,23 +107,23 @@ STWO::ListNode* STWO::LinkedList::reverseList(ListNode* head) {
 }
 
 STWO::ListNode* STWO::LinkedList::reverseNode(ListNode* cur) {
-  ListNode* tmp = cur->next;
+  ListNode* tmp = cur->_next;
   ListNode* prev;
-  if (tmp->next == nullptr) {
+  if (tmp->_next == nullptr) {
     this->first = tmp;
-    first->next = cur;
-    cout << "this->first " << this->first->val << endl;
-    cout << "first->next " << first->next->val << endl;
-    return first->next;
+    first->_next = cur;
+    cout << "this->first " << this->first->_val << endl;
+    cout << "first->next " << first->_next->_val << endl;
+    return first->_next;
   } 
   else {
     prev = cur;
     cur = reverseNode(tmp);
-    cur->next = prev;
-    cout << "cur-value " << cur->val<<"\n";
-    cout << "cur-next->value " << cur->next->val<<"\n";
+    cur->_next = prev;
+    cout << "cur-value " << cur->_val<<"\n";
+    cout << "cur-next->value " << cur->_next->_val<<"\n";
   }
-  return cur->next;
+  return cur->_next;
 }
 
 STWO::ListNode* STWO::LinkedList::getFirstNodePtr() {
@@ -132,8 +132,8 @@ STWO::ListNode* STWO::LinkedList::getFirstNodePtr() {
 
 void STWO::LinkedList::addNode(int v) {
     ListNode* newLink = new ListNode(0); //initialize pointer with val as 0
-    newLink->val = v;
-    newLink->next = first;
+    newLink->_val = v;
+    newLink->_next = first;
     first = newLink; 
     //delete newLink;
 }
@@ -144,8 +144,8 @@ void STWO::LinkedList::displayAll() {
     cout << " current data:  \n";
     while (cur != nullptr) {
         //cout << cur << " " <<  cur->val << " " << endl;
-        cout << cur->val << " " << endl;
-        cur = cur->next; //point to the next pointer for accessing data in the next Node
+        cout << cur->_val << " " << endl;
+        cur = cur->_next; //point to the next pointer for accessing data in the next Node
     }
 }
 
@@ -1059,9 +1059,9 @@ bool S::Solution::containsNearbyAlmostDuplicate(std::vector<int>& nums, int inde
         if(nums[i] < 0) --bucket;
 
         if(buckets.find(bucket) != buckets.end()) { //see if find any key mathcing value of "bucket", if not finding the key, (buckets.find(bucket) returns the iterator as buckets.end()
-            for (unsigned i=0; i<buckets.bucket_count(); ++i) {
-                std::cout << "bucket #" << i << " contains: ";
-                for (auto it = buckets.begin(i); it!=buckets.end(i); ++it) {
+            for (unsigned ii=0; ii<buckets.bucket_count(); ++ii) {
+                std::cout << "bucket #" << ii << " contains: ";
+                for (auto it = buckets.begin(ii); it!=buckets.end(i); ++it) {
                     std::cout << "[" << it->first << ":" << it->second << "] ";
                     std::cout << "\n";
                 }
@@ -1070,9 +1070,9 @@ bool S::Solution::containsNearbyAlmostDuplicate(std::vector<int>& nums, int inde
         }
         else {
             buckets[bucket] = nums[i]; //assign nums[i] to a key value of bucket
-            for (unsigned i=0; i<buckets.bucket_count(); ++i) {
-                std::cout << "bucket #" << i << " contains: ";
-                for (auto it = buckets.begin(i); it!=buckets.end(i); ++it) {
+            for (unsigned ii=0; ii<buckets.bucket_count(); ++ii) {
+                std::cout << "bucket #" << ii << " contains: ";
+                for (auto it = buckets.begin(ii); it!=buckets.end(i); ++it) {
                     std::cout << "[" << it->first << ":" << it->second << "] ";
                     std::cout << "\n";
                 }
@@ -1397,14 +1397,14 @@ void S::Solution::print1Dvector(vector<char>& s) {
 
 
 void STREE::Tree::printTree(STREE::TreeNode* node) {
-   if (node->left!=nullptr and node->right!=nullptr) {
+   if (node->_left!=nullptr and node->_right!=nullptr) {
      printf("   %d   \n", node->val);
      printf("  / \\  \n");
-     printTree(node->left);
-     printTree(node->right);
+     printTree(node->_left);
+     printTree(node->_right);
    }
    
-   if (node->left==nullptr and node->right==nullptr) {
+   if (node->_left==nullptr and node->_right==nullptr) {
      printf("   %d    \n", node->val);
      printf("  / \\   \n");
      printf(" NIL NIL \n");
@@ -1416,8 +1416,8 @@ int STREE::Tree::maxDepth(STREE::TreeNode* root) {
   if (root==nullptr)
     return 0;
   
-  int dL = maxDepth(root->left); 
-  int dR = maxDepth(root->right);
+  int dL = maxDepth(root->_left); 
+  int dR = maxDepth(root->_right);
  
   return std::max(dL, dR)+1;
   /*
@@ -1481,7 +1481,7 @@ void S::Solution::print1Dvector(vector<int>& v) {
 // with the largest sum, and return its sum.
 int S::Solution::maxSubArray(vector<int>& nums) {
   // O(n) 
-  typedef unsigned int uint;
+  //typedef unsigned int uint;
   uint nSize = nums.size();
   vector<int> maxSum(nSize,0);
   maxSum[0]=nums[0];

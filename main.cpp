@@ -11,8 +11,6 @@ using T::Thrd;
 using namespace STWO;
 using namespace STREE;
 using namespace SHUFFLE;
-//using C::Functor;
-//using namespace C;
 void hello();
 
 int (*funPtr)(int a, int b);  //function pointer
@@ -63,8 +61,68 @@ int testArrayLikeDsAlg() {
   return 0;
 }
 
+int testDLinkedList() {
+  DSALG::DLinkedList<int> dLLi;
+  
+  dLLi.showKeys();
+
+  printf("\nprepending...\n");
+  dLLi.prependLink(1);
+  dLLi.prependLink(4);
+  dLLi.prependLink(16);
+  dLLi.prependLink(9);
+  dLLi.showKeys();
+  dLLi.prependLink(25);
+
+  printf("\nsearching...\n");
+  assert((dLLi.searchLink(4)->_value)==4);
+  assert(dLLi.searchLink(5)==nullptr);
+  
+  dLLi.showKeys();
+  printf("\ninserting...\n");
+  dLLi.insertLink(36/*newLink*/, 9/*refLink*/);
+  
+  dLLi.showKeys();
+  printf("\ndeleting...\n");
+  dLLi.deleteLink(4);
+  
+  dLLi.showKeys();
+  
+  
+  DSALG::DLinkedList<double> dLLr;
+  
+  dLLr.showKeys();
+
+  printf("\nprepending...\n");
+  dLLr.prependLink(1.1);
+  dLLr.prependLink(4.9);
+  dLLr.prependLink(16.4);
+  dLLr.prependLink(9.3);
+  dLLr.showKeys();
+  dLLr.prependLink(25.7);
+
+  printf("\nsearching...\n");
+  assert((dLLr.searchLink(4.9)->_value)==4.9);
+  assert(dLLr.searchLink(5)==nullptr);
+  
+  dLLr.showKeys();
+  printf("\ninserting...\n");
+  dLLr.insertLink(36.2/*newLink*/, 9.3/*refLink*/);
+  
+  dLLr.showKeys();
+  printf("\ndeleting...\n");
+  dLLr.deleteLink(4.9);
+  
+  dLLr.showKeys();
+
+  return 0;
+}
+
 int main() {
-  assert(testArrayLikeDsAlg()==0);
+  
+  assert(testDLinkedList()==0);
+  
+  //assert(testArrayLikeDsAlg()==0);
 
   //Solution s;
   /*

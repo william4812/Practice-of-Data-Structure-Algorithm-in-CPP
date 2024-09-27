@@ -24,8 +24,198 @@ using namespace std;
 
 
 namespace DSALG{
+ 
+
+  /* SLink for singly linked list*/ 
+  template <typename T>
+  struct SLink {
+    T _value;
+    SLink* _next;
+    /* ctor */
+    SLink(const T& value=0):_value(value), _next(nullptr) {
+      //printf("Resource Acquisition Is Initialization.\n");
+      //cout << "SLink of value: " << _value << endl;
+    };
+    /* dtor */
+    ~SLink() {
+      //printf("Deallocation...\n");
+      //cout << "SLink of value: " << _value << endl;
+    }
+  };
 
 
+  /* DLink for doubly link derived from SLink */
+  template <typename T>
+  struct DLink : public SLink<T> {
+    DLink* _prev;
+    
+    /* ctor */
+    DLink(const T& value): SLink<T>(value) {
+      _prev = nullptr;
+      printf("Resource Acquisition Is Initialization.\n");
+      cout << "DLink of value: " << SLink<T>::_value << endl;
+    };
+    /* dtor */
+    ~DLink() {
+      printf("Deallocation...\n");
+      cout << "DLink of value: " << SLink<T>::_value << endl;
+    }
+  };
+
+
+  /* doubly linked list */
+  template <typename T>
+  class DLinkedList {
+  private:
+    DLink<T>* _head;
+  
+  public:
+    /* ctor */
+    DLinkedList():_head(nullptr) {
+      printf("Resource Acquisition Is Initialization.\n");
+      cout << "DLinkedList" << endl;
+    };
+    /* dtor */
+    ~DLinkedList() {
+      printf("Deallocation of linkedlist\n");
+    };
+    
+    DLink<T>* searchLink(const T& value);
+    void prependLink(const T& value);
+    void insertLink(const T& newValue, const T& refValue);
+    void deleteLink(const T& deletedValue);
+    void showKeys();
+  };
+ 
+
+  template <typename T>
+  DLink<T>* DLinkedList<T>::searchLink(const T& value) {
+    if (this->_head == nullptr) {
+      printf("Empty linked list\n");
+      return nullptr;
+    }
+    
+    /* assign _head ptr to tempLink*/
+    DLink<T>* tempLink = this->_head;
+
+    while (tempLink != nullptr) {
+      /* check if link of key is found */
+      if (tempLink->_value == value) {
+        cout << "found link of key of " << value << endl;
+        return tempLink; // found a link with key value
+      }
+      tempLink = static_cast<DLink<T>*>(tempLink->_next);
+    }
+    /* found no link matching key*/     
+    cout << "No link matching key of " << value << endl; 
+    return nullptr;
+  };
+
+  template <typename T>
+  void DLinkedList<T>::prependLink(const T& value) {
+    DLink<T>* tempLink = new DLink<T>(value);
+    //cout << tempLink->_value << endl;
+
+    /* update what pointer points */
+    
+    /* assign original value pointed by _head to tempLink->_next */
+    tempLink->_next = this->_head;
+    
+    /* assign nullptr as head of list to tempLink->_prev */
+    tempLink->_prev = nullptr; 
+
+    /* assign tempLink to this->_head->_prev*/
+    if (this->_head!=nullptr) {
+      this->_head->_prev = tempLink;
+    }
+
+    /* assign new tempLink to what _head points */
+    this->_head = tempLink; // head pointing to a new DLink
+  };
+
+  template <typename T>
+  void DLinkedList<T>::insertLink(const T& newValue,
+      const T& refValue) {
+    /*search link of refValue*/
+    DLink<T>* refLink = this->searchLink(refValue);
+
+    /* link of value not found */
+    if (refLink==nullptr) return;
+
+    /* create a new link of newValue */
+    DLink<T>* newLink = new DLink<T>(newValue);
+
+    /* update the _next and _prev of nearby links 
+     * newLink is connected next to refLink */
+    
+    /* assign refLink's next to newLink's next */
+    newLink->_next = refLink->_next; 
+    
+    /* assign refLink's next's prev to newLink's prev */
+    newLink->_prev = refLink; 
+    
+    /* assigne newLink to refLink's _next's _prev*/
+    if (refLink->_next!=nullptr) { 
+      static_cast<DLink<T>*>(refLink->_next)->_prev = 
+        newLink;
+    }
+    /* assign newLink to refLink's next */
+    refLink->_next = newLink;
+  }
+  
+  template <typename T>
+  void DLinkedList<T>::deleteLink(const T& deletedValue) {
+    
+    DLink<T>* deletedLink = this->searchLink(deletedValue);
+    
+    /* no link of deletedValue is found*/
+    if (deletedLink == nullptr) return;
+      
+    //cout << static_cast<DLink<T>*>(deletedLink->_next)->_prev->_value << endl;
+    cout << deletedLink->_value << endl;
+
+    /* update _prev and _next of nearby links */
+
+    /* assign deletedLink's _prev's _next to deletedLink's _next */
+    if (deletedLink->_prev != nullptr) {
+      deletedLink->_prev->_next = deletedLink->_next;
+    } /*deletedLink->_prev is pointed by _head*/ else {
+      this->_head = static_cast<DLink<T>*>(deletedLink->_next);
+    }
+
+    /* assign deletedLink's _next's _prev to deletedLink's _prev */
+    if (deletedLink->_next != nullptr) {
+      static_cast<DLink<T>*>(deletedLink->_next)->_prev = 
+        deletedLink->_prev;
+    }
+    
+    /* deallocate the memory of deletedLink */
+    delete deletedLink;
+  }
+
+  template <typename T>
+  void DLinkedList<T>::showKeys() {
+    if (this->_head == nullptr) {
+      printf("Empty linked list\n");
+      return;
+    }
+
+    /* assign _head ptr to tempLink*/
+    DLink<T>* tempLink = this->_head;
+
+    while (tempLink != nullptr) {
+      cout << tempLink->_value << " ";
+      
+      /* assign _next to tempLink */
+      tempLink = static_cast<DLink<T>*>(tempLink->_next);
+    }
+    cout << endl;
+  }
+
+  /* The template class and functions are defined in 
+   * the same .h file. 
+   * More advanded setting is needed to separate defintion 
+   * to .cpp for template class and functions */
   template <typename T>
   class ArrayLikeDsAlg {
   public:
@@ -42,6 +232,10 @@ namespace DSALG{
     void heapSort(T arr[]);
     void quickSort(T arr[]);
     
+    void countingSort();
+    void radixSort();
+    void bucketSort();
+
     void showArray(T arr[], const int& arrSize);
   };
 
@@ -100,12 +294,14 @@ namespace DSALG{
     /* Check index */
     if (leftIndex >= rightIndex) return;
       
-    /* Divide and conquer recurrsively subarrays */
+    /* O(log n) time complexity
+     * Divide and conquer recurrsively subarrays */
     int midIndex = leftIndex + 0.5*(rightIndex-leftIndex);
     runMergeSort(arr, leftIndex, midIndex);
     runMergeSort(arr, midIndex+1, rightIndex);
 
-    /* Merge the subarrays */
+    /* O(n) time complexity
+     * Merge the subarrays */
     merge(arr, leftIndex, midIndex, rightIndex);
   };
   
@@ -187,12 +383,12 @@ namespace T {
 namespace STREE {
   struct TreeNode {
     int val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode() : val(0), left(nullptr), right(nullptr) {};
-    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {};
+    TreeNode* _left;
+    TreeNode* _right;
+    TreeNode() : val(0), _left(nullptr), _right(nullptr) {};
+    TreeNode(int x) : val(x), _left(nullptr), _right(nullptr) {};
     TreeNode(int x, TreeNode *left, TreeNode *right) : \
-      val(x), left(left), right(right) {};
+      val(x), _left(left), _right(right) {};
   };
 
   class Tree {
@@ -231,11 +427,11 @@ namespace STHREE {
 
 namespace STWO {
   struct ListNode {
-    int val;
-    ListNode* next;
-    ListNode() : val(0), next(nullptr) {};
-    ListNode(int x) : val(x), next(nullptr) {};
-    ListNode(int x, ListNode *next) : val(x), next(next) {};
+    int _val;
+    ListNode* _next;
+    ListNode() : _val(0), _next(nullptr) {};
+    ListNode(int x) : _val(x), _next(nullptr) {};
+    ListNode(int x, ListNode *next) : _val(x), _next(next) {};
   };
 
   class LinkedList {
@@ -290,19 +486,20 @@ namespace S {
     };
 
     struct TreeNode {
-        int val;
-        TreeNode* left;
-        TreeNode* right;
-        TreeNode() : val(0), left(nullptr), right(nullptr) {}
-        TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
-        TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+        int _val;
+        TreeNode* _left;
+        TreeNode* _right;
+        TreeNode() : _val(0), _left(nullptr), _right(nullptr) {}
+        TreeNode(int x) : _val(x), _left(nullptr), _right(nullptr) {}
+        TreeNode(int x, TreeNode *left, TreeNode *right) : 
+          _val(x), _left(left), _right(right) {}
     };
 
     class Solution {
     private:
         std::string sC;
         std::vector<int> iV;
-        std::vector<std::vector<int>>  diff;
+        std::vector<std::vector<int>> _diff;
     public:
         Solution(): sC("") {};   // constructor
         ~Solution() {};         // destructor
