@@ -23,14 +23,62 @@ using namespace std;
 
 
 namespace DSALG{
+
+
   template <typename T>
   class ArrayLikeDsAlg {
   public:
-    void insertionSort(T arr[]);
-
-  private:
-
+    void bubbleSort(T arr[], const int& arrSize);
+    void insertionSort(T arr[], const int& arrSize);
+    void mergeSort(T arr[], const int& arrSize);
+    void heapSort(T arr[]);
+    void quickSort(T arr[]);
+    
+    void showArray(T arr[], const int& arrSize);
   };
+
+  /* Bubble sort runs O(n^2) time complexity */
+  template <typename T>
+  void ArrayLikeDsAlg<T>::bubbleSort(T arr[], const int& arrSize){
+    /* empty of single element array */
+    if (arrSize <= 1) return;
+    
+    for (auto i=0; i<arrSize-1; ++i) {
+      for (auto j=i+1; j<arrSize; ++j) {
+        if (arr[i] > arr[j]) swap(arr[i], arr[j]);
+      }
+    }
+  };
+
+  /* Insertion sort runs O(n^2) time complexity */
+  template <typename T>
+  void ArrayLikeDsAlg<T>::insertionSort(T arr[], const int& arrSize){
+    /* empty of single element array */
+    if (arrSize <= 1) return;
+
+    for (auto i=1; i<arrSize; ++i) {
+      T key = arr[i];
+      auto j = i-1;
+      /* check if key is smaller than arr[j] */
+      while (j>=0 and arr[j] > key) {
+        /* move arr[j] to the arr[j+1] next to j, 
+         * then j-- yields j-1 for next iteration
+         * */
+        arr[j+1] = arr[j];
+        --j; 
+      }
+      arr[++j]=key; // set key to final position in A[1:i]
+    }
+  };
+  
+  /* Show array elements */ 
+  template <typename T>
+  void ArrayLikeDsAlg<T>::showArray(T arr[], const int& arrSize) {
+    for (auto i=0; i<arrSize; ++i) {
+      cout << arr[i] << " ";
+    }
+    cout << "\n";
+  }
 }
 
 

@@ -1,24 +1,17 @@
 #include "Solution.h"
 
 using namespace std;
-/*S: Solution*/
 using S::Solution;
 using S::LinkedList;
 using S::ListNode;
 using S::TreeNode;
-/*T: Thread*/
 using T::Thrd;
-/*C: Callback*/
-//using C::Functor;
 
-/*S2: Callback*/
 using namespace STWO;
 using namespace STHREE;
 using namespace STREE;
 using namespace SHUFFLE;
-
-
-
+using DSALG::ArrayLikeDsAlg;
 
 
 bool STHREE::hasCycle(STHREE::ListNode* head) {

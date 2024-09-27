@@ -35,8 +35,29 @@ int diff(int a, int b) {
 }
 
 int testArrayLikeDsAlg() {
-  //DSALG::ArrayLikeDsAlg<int> aLDA;
-  //aLDA.insertionSort(arr);
+  DSALG::ArrayLikeDsAlg<int> aLDAi;
+  
+  int arrI[] {1, 22, 321, 4567, -4, -15};
+  int arrSize = sizeof(arrI)/sizeof(int);
+  printf("Array of integers");
+  printf("before sort...");
+  aLDAi.showArray(arrI, arrSize);
+  //aLDAi.bubbleSort(arrI, arrSize);
+  aLDAi.insertionSort(arrI, arrSize);
+  printf("after sort...");
+  aLDAi.showArray(arrI, arrSize);
+  
+  DSALG::ArrayLikeDsAlg<double> aLDAd;
+  double arrD[] {1.9, 3.1, 1.99, -321.3, 4567.6, -4.001, 15.56};
+  arrSize = sizeof(arrD)/sizeof(double);
+  printf("Array of doubles");
+  printf("before sort...");
+  aLDAd.showArray(arrD, arrSize);
+  //aLDAd.bubbleSort(arrD, arrSize);
+  aLDAd.insertionSort(arrD, arrSize);
+  printf("after sort...");
+  aLDAd.showArray(arrD, arrSize);
+  
   return 0;
 }
 
