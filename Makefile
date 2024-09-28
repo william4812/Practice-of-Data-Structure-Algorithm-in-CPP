@@ -2,9 +2,15 @@
 CC = g++
 
 # compiler flags:
-#  -g     - this flag adds debugging information to the executable file
-#  -Wall  - this flag is used to turn on most compiler warnings
-CFLAGS  = -g -v -Wall -Werror -Wextra -Wpedantic -Wunused -H 
+#  -g: this flag adds debugging information to the executable file
+#  -Wall: this flag is used to turn on most compiler warnings
+#  -Wextra: additional warnings beyond -Wall.
+#  -Werror: Treats warnings as errors, causing the build to fail if any warnings
+#  -Wshadow: warn about variable shadowing. 
+#            This occurs when a variable with the same name as a previously 
+#            declared variable is declared within a nested scope, potentially obscuring the outer variable. 
+#  -Wformat-security: ??
+CFLAGS  = -g -H -v -Wall -Werror -Wextra -Wpedantic -Wunused -Wshadow -Wformat-security
 
 # The build target 
 TARGET = main
