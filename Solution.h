@@ -379,13 +379,11 @@ namespace DSALG{
      * max or root to arr[arrSize-2] in recurrsive manner till 
      * arr[1] */
     for (auto i=arrSize-1; i>0; --i) {
-
       /* move root toward the end of heap*/
       swap(arr[0]/*root*/, arr[i]);
       
       /* heapify again for smaller arr[0:i]*/
       maxHeapify(arr, 0/*root index*/, i/*new heap size*/);
-    
     }
   }
 
