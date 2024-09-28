@@ -34,8 +34,9 @@ int diff(int a, int b) {
 
 int testArrayLikeDsAlg() {
   DSALG::ArrayLikeDsAlg<int> aLDAi;
-  /* 
-  int arrI[] {1, 22, 321, 4567, -4, -15};
+   
+  //int arrI[] {1, 22, 321, 4567, -4, -15};
+  int arrI[] {2, 8, 7, 1, 3, 5, 6, 4};
   int arrSize = sizeof(arrI)/sizeof(int);
   printf("Array of integers\n");
   printf("before sort...\n");
@@ -43,19 +44,25 @@ int testArrayLikeDsAlg() {
   //aLDAi.bubbleSort(arrI, arrSize);
   //aLDAi.insertionSort(arrI, arrSize);
   //aLDAi.mergeSort(arrI, arrSize);
-  */
+  //aLDAi.heapSort(arrI, arrSize);
+  //cout << aLDAi.getPivotIndex(arrI, 0, arrSize-1) << endl;
+  //cout << aLDAi.getPivotIndex(arrI, 0, 2) << endl;
+  aLDAi.quickSort(arrI, arrSize);
 
+  /*
   //int arrIH[] {16, 4, 10, 14, 7, 9, 3, 2, 8, 1};
   int arrIH[] {4, 1, 3, 2, 16, 9, 10, 14, 8, 7};
   int arrSizeH = sizeof(arrIH)/sizeof(int);
   aLDAi.showArray(arrIH, arrSizeH);
+  */
   //aLDAi.heapSort(arrIH, arrSizeH);
   //aLDAi.maxHeapify(arrIH, 1/*zero-based index*/, arrSizeH);
   //aLDAi.buildMaxHeap(arrIH, arrSizeH);
-  aLDAi.heapSort(arrIH, arrSizeH);
+  //aLDAi.heapSort(arrIH, arrSizeH);
+  
 
   printf("after sort...\n");
-  aLDAi.showArray(arrIH, arrSizeH); // -15 -4 1 22 321 4567
+  aLDAi.showArray(arrI, arrSize); // -15 -4 1 22 321 4567
  
   /* 
   DSALG::ArrayLikeDsAlg<double> aLDAd;
@@ -66,7 +73,8 @@ int testArrayLikeDsAlg() {
   aLDAd.showArray(arrD, arrSize);
   //aLDAd.bubbleSort(arrD, arrSize);
   //aLDAd.insertionSort(arrD, arrSize);
-  aLDAd.mergeSort(arrD, arrSize);
+  //aLDAd.mergeSort(arrD, arrSize);
+  aLDAd.heapSort(arrD, arrSize);
   printf("after sort...\n");
   aLDAd.showArray(arrD, arrSize); // -321.3 -4.001 1.9 1.99 3.1 15.56 4567.6
   */

@@ -238,8 +238,14 @@ namespace DSALG{
     void maxHeapify(T arr[], const int& curIndex, const int& arrSize);
     void buildMaxHeap(T arr[], const int& arrSize);
 
-    void quickSort(T arr[]);
-    
+    void quickSort(T arr[], const int& arrSize);
+    void runQuickSort(T arr[], 
+        const int& leftIndex, 
+        const int& rightIndex);
+    int getPivotIndex(T arr[], 
+        const int& leftIndex,
+        const int& rightIndex);
+
     void countingSort();
     void radixSort();
     void bucketSort();
@@ -450,7 +456,57 @@ namespace DSALG{
       maxHeapify(arr, largestIndex, arrSize);
     }
   }
+   
+  /* O(n^2) time complexity
+   * quick sort has swap step in divide (partition) 
+   * */ 
+  template <typename T>
+  void ArrayLikeDsAlg<T>::quickSort(T arr[], 
+      const int& arrSize){
+    runQuickSort(arr, 0, arrSize-1/*index*/);
+  }
+  
+  template <typename T>
+  void ArrayLikeDsAlg<T>::runQuickSort(T arr[],
+     const int& leftIndex,
+     const int& rightIndex) {
+    
+    if (leftIndex > rightIndex) return;
 
+    /* get pivotIndex with 
+     * elements arr[leftIndex: pivotIndex-1] <= arr[pivotIndex]
+     * elements arr[pivotIndex+1:rightIndex] > arr[pivotIndex]*/
+    int pivotIndex = getPivotIndex(arr, leftIndex, rightIndex);
+    //cout << "here " << pivotIndex << endl; 
+    /* subarray Left to pivotIndex */
+    runQuickSort(arr, leftIndex, pivotIndex-1);
+    
+    /* subarray Right to pivotIndex */
+    runQuickSort(arr, pivotIndex+1, rightIndex);
+  } 
+
+  template <typename T>
+  int ArrayLikeDsAlg<T>::getPivotIndex(T arr[],
+     const int& leftIndex,
+     const int& rightIndex) {
+    /* Set initial  pivot index */
+    auto pivotIndex = rightIndex; // rightIndex may be changed 
+    auto pivotLeft = leftIndex-1; // index left to pivot
+
+    /* browse elements in arr[0:r-1] */
+    for (auto i=leftIndex; i<rightIndex; ++i) {
+      /* element smaller than pivot */
+      if (arr[i]<=arr[pivotIndex]) {
+        /*move smaller element right to pivotLeft*/
+        swap(arr[i], arr[++pivotLeft]);
+      }
+    }
+
+    /* move pivot to arr[pivotLeft+1] */
+    swap(arr[pivotLeft+1], arr[pivotIndex]);
+    return (pivotLeft+1); 
+  }
+    
   /* Show array elements */ 
   template <typename T>
   void ArrayLikeDsAlg<T>::showArray(T arr[], const int& arrSize) {
