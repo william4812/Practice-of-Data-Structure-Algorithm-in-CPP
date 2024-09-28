@@ -34,7 +34,7 @@ int diff(int a, int b) {
 
 int testArrayLikeDsAlg() {
   DSALG::ArrayLikeDsAlg<int> aLDAi;
-  
+  /* 
   int arrI[] {1, 22, 321, 4567, -4, -15};
   int arrSize = sizeof(arrI)/sizeof(int);
   printf("Array of integers\n");
@@ -42,10 +42,22 @@ int testArrayLikeDsAlg() {
   aLDAi.showArray(arrI, arrSize);
   //aLDAi.bubbleSort(arrI, arrSize);
   //aLDAi.insertionSort(arrI, arrSize);
-  aLDAi.mergeSort(arrI, arrSize);
+  //aLDAi.mergeSort(arrI, arrSize);
+  */
+
+  //int arrIH[] {16, 4, 10, 14, 7, 9, 3, 2, 8, 1};
+  int arrIH[] {4, 1, 3, 2, 16, 9, 10, 14, 8, 7};
+  int arrSizeH = sizeof(arrIH)/sizeof(int);
+  aLDAi.showArray(arrIH, arrSizeH);
+  //aLDAi.heapSort(arrIH, arrSizeH);
+  //aLDAi.maxHeapify(arrIH, 1/*zero-based index*/, arrSizeH);
+  //aLDAi.buildMaxHeap(arrIH, arrSizeH);
+  aLDAi.heapSort(arrIH, arrSizeH);
+
   printf("after sort...\n");
-  aLDAi.showArray(arrI, arrSize); // -15 -4 1 22 321 4567
-  
+  aLDAi.showArray(arrIH, arrSizeH); // -15 -4 1 22 321 4567
+ 
+  /* 
   DSALG::ArrayLikeDsAlg<double> aLDAd;
   double arrD[] {1.9, 3.1, 1.99, -321.3, 4567.6, -4.001, 15.56};
   arrSize = sizeof(arrD)/sizeof(double);
@@ -57,7 +69,8 @@ int testArrayLikeDsAlg() {
   aLDAd.mergeSort(arrD, arrSize);
   printf("after sort...\n");
   aLDAd.showArray(arrD, arrSize); // -321.3 -4.001 1.9 1.99 3.1 15.56 4567.6
-  
+  */
+
   return 0;
 }
 
@@ -120,9 +133,9 @@ int testDLinkedList() {
 
 int main() {
   
-  assert(testDLinkedList()==0);
+  //assert(testDLinkedList()==0);
   
-  //assert(testArrayLikeDsAlg()==0);
+  assert(testArrayLikeDsAlg()==0);
 
   //Solution s;
   /*

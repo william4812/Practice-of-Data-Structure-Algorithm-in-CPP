@@ -222,6 +222,7 @@ namespace DSALG{
     void bubbleSort(T arr[], const int& arrSize);
     void insertionSort(T arr[], const int& arrSize);
     void mergeSort(T arr[], const int& arrSize);
+
     void runMergeSort(T arr[], 
         const int& leftIndex, 
         const int& rightIndex);
@@ -229,7 +230,14 @@ namespace DSALG{
         const int& leftIndex, 
         const int& midIndex,
         const int& rightIndex);
-    void heapSort(T arr[]);
+    
+    void heapSort(T arr[], const int& arrSize);
+    int parent(const int& curIndex) {return (curIndex>>1);};   
+    int leftChild(const int& curIndex) {return (curIndex<<1);};   
+    int rightChild(const int& curIndex) {return ((curIndex<<1)+1);};   
+    void maxHeapify(T arr[], const int& curIndex, const int& arrSize);
+    void buildMaxHeap(T arr[], const int& arrSize);
+
     void quickSort(T arr[]);
     
     void countingSort();
@@ -238,6 +246,7 @@ namespace DSALG{
 
     void showArray(T arr[], const int& arrSize);
   };
+  
 
   /* Bubble sort runs O(n^2) time complexity */
   template <typename T>
@@ -356,6 +365,94 @@ namespace DSALG{
     delete[] rightArr;
   };
   
+  /* heap sort runs O(nlon n) time complexity i
+   * O(n): buildMaxHeap
+   * O(log n): maxHeapify */
+  template <typename T>
+  void ArrayLikeDsAlg<T>::heapSort(T arr[], const int& arrSize){
+    /* converts an array arr[0:arrSize-1] into a max-heap */ 
+    buildMaxHeap(arr, arrSize);
+    
+    /* In each iteration, moving root element (maximum at arr[0]) 
+     * of arr[0:arrSize-1] to arr[arrSize-1], and then for next
+     * iteration, heapify arr[0:arrSize-2] and move the next 
+     * max or root to arr[arrSize-2] in recurrsive manner till 
+     * arr[1] */
+    for (auto i=arrSize-1; i>0; --i) {
+
+      /* move root toward the end of heap*/
+      swap(arr[0]/*root*/, arr[i]);
+      
+      /* heapify again for smaller arr[0:i]*/
+      maxHeapify(arr, 0/*root index*/, i/*new heap size*/);
+    
+    }
+  }
+
+  /* O(n) time complexity 
+   * helper function buildMaxHeap converts an array A[1 : n] or
+   * arr[0:arrSize-1] into a max-heap by calling maxHeapify in 
+   * a Bottom-Up manner.
+   * 
+   * Ouput: the maximum element of the array is stored at      
+   * the root arr[0]
+   *
+   * A[ floor(n>>2)+1:n ] are leave nodes as 1-element heap
+   * A[ 1:floor(n>>2) ] are internal nodes running maxHeapify
+   * 
+   * */
+  template <typename T>  
+  void ArrayLikeDsAlg<T>::buildMaxHeap(T arr[], 
+      const int& arrSize /*size as one-based index*/) {
+    
+    for (auto i=(floor(arrSize>>1)-1)/*zero-based index*/; i>=0; --i ) {
+      maxHeapify(arr, i, arrSize);
+    }
+  }
+
+  /* O(log n) time complexity
+   * helper function maintain max heap property
+   * A[parent(index)]>=A[index] */  
+  template <typename T>
+  void ArrayLikeDsAlg<T>::maxHeapify(T arr[], 
+      const int& curIndex,
+      const int& arrSize) {
+    //cout << arr[curIndex] << endl;
+    
+    /* indices is converted based on one-based index */
+    //auto parentIndex = parent(curIndex+1) - 1;
+    auto leftChildIndex = leftChild(curIndex+1) - 1;
+    auto rightChildIndex = rightChild(curIndex+1) - 1;
+    auto largestIndex = curIndex;
+
+    /* check if
+     * 1. left child index (one-based) within array/heap size 
+     * 2. leftChild has larger value than curIndex */
+    if ((leftChildIndex+1) <= arrSize and 
+        arr[leftChildIndex] > arr[curIndex]) {
+      largestIndex = leftChildIndex;
+    } 
+    
+    /* check if 
+     * 1. right child index (one-based) within array/heap size 
+     * 2. rightChild has larger value than the updated 
+     * largest value at largestIndex */
+    if ((rightChildIndex+1) <= arrSize and 
+        arr[rightChildIndex] > arr[largestIndex]) {
+      largestIndex = rightChildIndex; 
+    }
+
+    /* check if the largest is not at curIndex */
+    if (largestIndex!=curIndex) {
+      
+      /* swap the largest value with value at curIndex */
+      swap(arr[curIndex], arr[largestIndex]);
+
+      /* moving to the current largest index to heapify */
+      maxHeapify(arr, largestIndex, arrSize);
+    }
+  }
+
   /* Show array elements */ 
   template <typename T>
   void ArrayLikeDsAlg<T>::showArray(T arr[], const int& arrSize) {
