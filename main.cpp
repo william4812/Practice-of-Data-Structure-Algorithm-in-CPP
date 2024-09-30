@@ -138,12 +138,113 @@ int testDLinkedList() {
 
   return 0;
 }
+  
+int testStack() {
+  DSALG::Stack<int> S;
+  assert(S.isEmpty()==true);
+  cout << "Stack is " 
+       << (S.isEmpty()?"empty":"not empty")
+       << "!\n";
+
+  printf("push elements...\n");
+  S.push(15);
+  S.push(6);
+  S.push(2);
+  S.push(9);
+  
+  cout << "Stack is " 
+       << (S.isEmpty()?"empty":"not empty")
+       << "!\n";
+
+  cout << "get top element " << S.getTop() << endl;
+  
+  printf("push two more elements...\n");
+  S.push(17);
+  S.push(3);
+  cout << "get top element " << S.getTop() << endl;
+  
+  cout << "pop top element... " << endl;
+  S.pop();
+  cout << "get top element " << S.getTop() << endl;
+  cout << "pop top element... " << endl;
+  S.pop();
+  cout << "get top element " << S.getTop() << endl;
+  cout << "pop top element... " << endl;
+  S.pop();
+  cout << "get top element " << S.getTop() << endl;
+  cout << "pop top element... " << endl;
+  S.pop();
+  cout << "get top element " << S.getTop() << endl;
+  cout << "pop top element... " << endl;
+  S.pop();
+  cout << "get top element " << S.getTop() << endl;
+  
+  cout << "Stack is " 
+       << (S.isEmpty()?"empty":"not empty")
+       << "!\n";
+  cout << "pop top element... " << endl;
+  S.pop();
+  
+  return 0;
+}
+
+std::string reverseString(const std::string& strInput) {
+  
+  DSALG::Stack<char> strTemp;
+  for (const auto& s: strInput) {
+    strTemp.push(s);
+  }
+   
+  std::string reversedString;
+  while (!strTemp.isEmpty()) {
+    reversedString+=(strTemp.getTop());
+    strTemp.pop();
+  }
+
+  return reversedString;
+}
+
+int testReversedString() {
+  std::string originalString{"Hello, World!"}; 
+  assert(reverseString(originalString) == "!dlroW ,olleH");
+  printf("The revere of original string \"%s\" is \"%s\".\n", 
+      originalString.c_str(),
+      reverseString(originalString).c_str());
+  return 0;
+}
+
+int testBrowseHistory() {
+  DSALG::BrowseHistory<std::string> bH;
+  bH.visit("explorecalifornia.org");
+  bH.visit("pixelford.com");
+  bH.visit("landonotel.com");
+  
+  cout << "current site: " << bH.current() << endl;
+  
+  bH.back();
+  cout << "current site: " << bH.current() << endl;
+
+  bH.back();
+  cout << "current site: " << bH.current() << endl;
+  
+  bH.back();
+  cout << "current site: " << bH.current() << endl;
+  
+  return 0;
+} 
+
 
 int main() {
   
+  assert(testBrowseHistory()==0);
+
+  //assert(testReversedString()==0);
+
   //assert(testDLinkedList()==0);
   
-  assert(testArrayLikeDsAlg()==0);
+  //assert(testStack()==0);
+
+  //assert(testArrayLikeDsAlg()==0);
 
   //Solution s;
   /*

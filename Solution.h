@@ -195,44 +195,48 @@ namespace DSALG{
 
   template <typename T>
   void DLinkedList<T>::showKeys() {
-    if (this->_head == nullptr) {
-      printf("Empty linked list\n");
-      return;
-    }
-
-    /* assign _head ptr to tempLink*/
-    DLink<T>* tempLink = this->_head;
-
-    while (tempLink != nullptr) {
-      cout << tempLink->_value << " ";
-      
-      /* assign _next to tempLink */
-      tempLink = static_cast<DLink<T>*>(tempLink->_next);
-    }
-    cout << endl;
+  if (this->_head == nullptr) {
+    printf("Empty linked list\n");
+    return;
   }
 
-  /* The template class and functions are defined in 
-   * the same .h file. 
-   * More advanded setting is needed to separate defintion 
-   * to .cpp for template class and functions */
-  template <typename T>
-  class ArrayLikeDsAlg {
-  public:
-    void bubbleSort(T arr[], const int& arrSize);
-    void insertionSort(T arr[], const int& arrSize);
-    void mergeSort(T arr[], const int& arrSize);
+  /* assign _head ptr to tempLink*/
+  DLink<T>* tempLink = this->_head;
 
-    void runMergeSort(T arr[], 
-        const int& leftIndex, 
-        const int& rightIndex);
-    void merge(T arr[], 
-        const int& leftIndex, 
-        const int& midIndex,
-        const int& rightIndex);
+  while (tempLink != nullptr) {
+    cout << tempLink->_value << " ";
     
-    void heapSort(T arr[], const int& arrSize);
-    int parent(const int& curIndex) {return (curIndex>>1);};   
+    /* assign _next to tempLink */
+    tempLink = static_cast<DLink<T>*>(tempLink->_next);
+  }
+  cout << endl;
+}
+
+
+/* The template class and functions are defined in 
+ * the same .h file. 
+ * More advanded setting is needed to separate defintion 
+ * to .cpp for template class and functions */
+template <typename T>
+class ArrayLikeDsAlg {
+public:
+  /* ctor */
+  ArrayLikeDsAlg() {};
+
+  void bubbleSort(T arr[], const int& arrSize);
+  void insertionSort(T arr[], const int& arrSize);
+  void mergeSort(T arr[], const int& arrSize);
+
+  void runMergeSort(T arr[], 
+      const int& leftIndex, 
+      const int& rightIndex);
+  void merge(T arr[], 
+      const int& leftIndex, 
+      const int& midIndex,
+      const int& rightIndex);
+  
+  void heapSort(T arr[], const int& arrSize);
+  int parent(const int& curIndex) {return (curIndex>>1);};   
     int leftChild(const int& curIndex) {return (curIndex<<1);};   
     int rightChild(const int& curIndex) {return ((curIndex<<1)+1);};   
     void maxHeapify(T arr[], const int& curIndex, const int& arrSize);
@@ -515,6 +519,85 @@ namespace DSALG{
     }
     cout << "\n";
   }
+
+  /* class Stack is LIFO data structure */
+  template <typename T>
+  class Stack : public vector<T> {
+  public:
+    Stack():_topIndex(-1), _vec(new vector<T>) {};
+    ~Stack() {delete[] _vec;};
+    void push(const T& value);
+    void pop();
+    T getTop();
+    bool isEmpty();
+
+  private:
+   int _topIndex;
+   vector<T>* _vec;
+  };
+
+  
+  /* push a value, incrementing _topIndex, 
+   * at the top of stack */
+  template <typename T>
+  void Stack<T>::push(const T& value) {
+    ++_topIndex;
+    //cout << "element " << value 
+    //     << " is pushed at _topIndex " << (_topIndex) << endl;
+    this->_vec->push_back(value);
+  }
+  
+  /* pop a value from top of a stack, then decrementing _topIndex */
+  template <typename T>
+  void Stack<T>::pop() {
+    /* pop only if stack is Not empty */
+    if (!isEmpty()) {
+     this-> _vec->pop_back();
+      --_topIndex;
+      return;
+    }
+    cout << "Empty stack! No element to pop...\n";
+  }
+  
+  /* pop a value from top of a stack, then decrementing _topIndex */
+  template <typename T>
+  T Stack<T>::getTop() {
+    /* getTop only if stack is Not empty */
+    if (!isEmpty()) return (this->_vec->at(_topIndex));
+    
+    cout << "Empty stack! No element at top\n";
+    exit(-1);
+  }
+  
+  /* check if stack is empty */
+  template <typename T>
+  bool Stack<T>::isEmpty() {
+    return ((_topIndex>-1)?false:true);
+  }
+
+  
+  /* class Stack is LIFO data structure */
+  template <typename T>
+  class BrowseHistory  {
+  public:
+    BrowseHistory() : _urlHistoryStackPtr(new Stack<T>) {};
+    void visit(const T& url) {_urlHistoryStackPtr->push(url);};
+    void back() {_urlHistoryStackPtr->pop();};
+    T current() const {
+      if (_urlHistoryStackPtr->isEmpty() ) {
+        cout << "No sites currently being viewed!\n";
+        exit(-1);
+      }
+      return _urlHistoryStackPtr->getTop();
+    };
+  
+  private:
+    std::string _url;
+    Stack<T>* _urlHistoryStackPtr;
+  };
+
+ 
+  /* TODO: class Queue */
 }
 
 
