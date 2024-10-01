@@ -524,6 +524,7 @@ public:
   template <typename T>
   class Stack : public vector<T> {
   public:
+    /* ctor */
     Stack():_topIndex(-1), _vec(new vector<T>) {};
     ~Stack() {delete[] _vec;};
     void push(const T& value);
@@ -576,7 +577,7 @@ public:
   }
 
   
-  /* class Stack is LIFO data structure */
+  /* class Stack: implementation of LIFO data structure */
   template <typename T>
   class BrowseHistory  {
   public:
@@ -597,7 +598,57 @@ public:
   };
 
  
-  /* TODO: class Queue */
+  /* class Queue: implementation of FIFO data structure */
+  template <typename T>
+  class Queue {
+  private:
+    int _headIndex;
+    int _tailIndex;
+    int _size;
+    int _capacity;
+    std::vector<T>* _vecPtr;
+
+  public:
+    /* ctor of one arg */
+    Queue(const int& capacity=12): 
+      _headIndex(0), _tailIndex(0), _size(0), _capacity(capacity),
+      _vecPtr(new vector<T>(capacity)) {};
+    
+    bool isFull() {
+      if (_size == _capacity) {
+        return true;
+      }
+      return false;
+    };
+
+    bool isEmpty() {return ((_size==0)?true:false);};
+
+    void enqueue(const T& value) {
+      if (isFull()) {
+        cout << "Queue is full\n";
+        return;
+      }
+      _vecPtr->at(_tailIndex++)=value;
+      cout << "value: " << value << " at " << _tailIndex-1 << endl;
+      _tailIndex%=_capacity;
+      ++_size;
+      //cout << "_size: " << _size << endl;
+    };
+    
+    T dequeue() {
+      T dequeuedValue = _vecPtr->at(_headIndex++);
+      _headIndex%=_capacity;
+      --_size;
+      cout << "_size: " << _size << endl;
+      return dequeuedValue;
+    };
+
+    T getFront() {return _vecPtr->at(_headIndex);};
+    
+  };
+
+
+
 }
 
 
