@@ -233,10 +233,62 @@ int testBrowseHistory() {
   return 0;
 } 
 
+int testQueue() {
+  DSALG::Queue<int> q(12);
+  
+  cout << "Queue is " << (q.isEmpty()?"empty":"not empty") << endl;
+  printf("Enqueue...\n");
+  for (auto i=0; i<6; ++i) q.enqueue(i);
+  q.enqueue(15);
+  q.enqueue(6);
+  q.enqueue(9);
+  q.enqueue(8);
+  q.enqueue(4);
+  q.enqueue(17);
+  cout << "Queue is " << (q.isFull()?"full":"not full") << endl;
+ 
+  cout << "getFront(): " << q.getFront() << endl; 
+  printf("Dequeue...\n");
+  cout << "Element at head: " << q.dequeue() << endl;
+  cout << "Queue is " << (q.isFull()?"full":"not full") << endl;
+
+  printf("Enqueue...\n");
+  q.enqueue(3);
+  cout << "Queue is " << (q.isFull()?"full":"not full") << endl;
+  printf("Dequeue...\n");
+  cout << "Element at head: " << q.dequeue() << endl;
+  printf("Dequeue...\n");
+  cout << "Element at head: " << q.dequeue() << endl;
+  printf("Dequeue...\n");
+  cout << "Element at head: " << q.dequeue() << endl;
+  printf("Dequeue...\n");
+  cout << "Element at head: " << q.dequeue() << endl;
+  printf("Dequeue...\n");
+  cout << "Element at head: " << q.dequeue() << endl;
+  printf("Dequeue...\n");
+  cout << "Element at head: " << q.dequeue() << endl;
+  printf("Dequeue...\n");
+  cout << "Element at head: " << q.dequeue() << endl;
+  printf("Dequeue...\n");
+  cout << "Element at head: " << q.dequeue() << endl;
+  printf("Dequeue...\n");
+  cout << "Element at head: " << q.dequeue() << endl;
+  printf("Dequeue...\n");
+  cout << "Element at head: " << q.dequeue() << endl;
+  printf("Dequeue...\n");
+  cout << "Element at head: " << q.dequeue() << endl;
+  printf("Dequeue...\n");
+  cout << "Element at head: " << q.dequeue() << endl;
+  cout << "Queue is " << (q.isEmpty()?"empty":"not empty") << endl;
+  
+  return 0;
+}
 
 int main() {
   
-  assert(testBrowseHistory()==0);
+  assert(testQueue()==0);
+
+  //assert(testBrowseHistory()==0);
 
   //assert(testReversedString()==0);
 
