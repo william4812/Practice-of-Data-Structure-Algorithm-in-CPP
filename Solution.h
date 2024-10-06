@@ -9,6 +9,7 @@
 #include <numeric> /* std::accumulate */
 #include <queue> /* priority_queue */
 #include <random> /* random_device */
+#include <regex>
 #include <stdlib.h> /* atoi */
 #include <string>
 #include <typeinfo>
@@ -24,7 +25,7 @@ using namespace std;
 
 
 namespace DSALG{
- 
+
 
   /* SLink for singly linked list*/ 
   template <typename T>
@@ -195,48 +196,48 @@ namespace DSALG{
 
   template <typename T>
   void DLinkedList<T>::showKeys() {
-  if (this->_head == nullptr) {
-    printf("Empty linked list\n");
-    return;
-  }
+    if (this->_head == nullptr) {
+      printf("Empty linked list\n");
+      return;
+    }
 
-  /* assign _head ptr to tempLink*/
-  DLink<T>* tempLink = this->_head;
+    /* assign _head ptr to tempLink*/
+    DLink<T>* tempLink = this->_head;
 
-  while (tempLink != nullptr) {
-    cout << tempLink->_value << " ";
-    
-    /* assign _next to tempLink */
-    tempLink = static_cast<DLink<T>*>(tempLink->_next);
+    while (tempLink != nullptr) {
+      cout << tempLink->_value << " ";
+      
+      /* assign _next to tempLink */
+      tempLink = static_cast<DLink<T>*>(tempLink->_next);
+    }
+    cout << endl;
   }
-  cout << endl;
-}
 
 
 /* The template class and functions are defined in 
  * the same .h file. 
  * More advanded setting is needed to separate defintion 
  * to .cpp for template class and functions */
-template <typename T>
-class ArrayLikeDsAlg {
-public:
-  /* ctor */
-  ArrayLikeDsAlg() {};
+  template <typename T>
+  class ArrayLikeDsAlg {
+  public:
+    /* ctor */
+    ArrayLikeDsAlg() {};
 
-  void bubbleSort(T arr[], const int& arrSize);
-  void insertionSort(T arr[], const int& arrSize);
-  void mergeSort(T arr[], const int& arrSize);
+    void bubbleSort(T arr[], const int& arrSize);
+    void insertionSort(T arr[], const int& arrSize);
+    void mergeSort(T arr[], const int& arrSize);
 
-  void runMergeSort(T arr[], 
-      const int& leftIndex, 
-      const int& rightIndex);
-  void merge(T arr[], 
-      const int& leftIndex, 
-      const int& midIndex,
-      const int& rightIndex);
-  
-  void heapSort(T arr[], const int& arrSize);
-  int parent(const int& curIndex) {return (curIndex>>1);};   
+    void runMergeSort(T arr[], 
+        const int& leftIndex, 
+        const int& rightIndex);
+    void merge(T arr[], 
+        const int& leftIndex, 
+        const int& midIndex,
+        const int& rightIndex);
+    
+    void heapSort(T arr[], const int& arrSize);
+    int parent(const int& curIndex) {return (curIndex>>1);};   
     int leftChild(const int& curIndex) {return (curIndex<<1);};   
     int rightChild(const int& curIndex) {return ((curIndex<<1)+1);};   
     void maxHeapify(T arr[], const int& curIndex, const int& arrSize);
@@ -648,8 +649,40 @@ public:
   };
 
 
+  /* Priority Queue */
+  template <typename T>
+  struct TaskKey {
+    std::string _task;
+    T _key;
+    /* ctor */
+    TaskKey() {}; 
+    TaskKey(const std::string& task, const T& key):_task(task), _key(key) {};
+  };
 
-}
+  template <typename T>
+  class PriorityQueue:public Queue<T> {
+  public:
+    PriorityQueue(const T& taskKey): _taskKey(taskKey) {};
+    void insert(const T& taskKey);
+    T getMaximum();
+    void extractMaximum();
+    void increaseMaximum();
+  private:
+    T  _taskKey;
+  };
+
+  
+  template <typename T>
+  T PriorityQueue<T>::getMaximum() {
+    return _taskKey;
+  }
+
+  template <typename T>
+  void PriorityQueue<T>::insert(const T& taskKey) {
+    //Queue<T>::enqueue(taskKey);
+  }
+
+} /* namespace DSALG */
 
 
 
