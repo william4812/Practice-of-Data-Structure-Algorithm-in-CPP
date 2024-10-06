@@ -1,5 +1,6 @@
 #include <iostream>
 #include <thread>
+#include <bitset>
 
 #include "Solution.h"
 
@@ -283,10 +284,48 @@ int testQueue() {
   
   return 0;
 }
+  
+int testBitwiseOperation() {
+  uint8_t number = 15;
+  cout << (unsigned int)number << endl;
+  cout << number << endl;
+
+  //number = (number >> 3);
+
+  cout << "hex of " << number << ": " 
+       << std::hex << number << endl;
+  
+  std::bitset<sizeof(int) * 8> binary(number);
+  std::cout << "Binary representation of 42: " << binary << std::endl;
+  
+  number = (number << 6);
+
+  cout << "hex of " << number << ": " 
+       << std::hex << number << endl;
+  
+  std::bitset<sizeof(int) * 8> binary2(number);
+  std::cout << "Binary representation of 42: " << binary2 << std::endl;
+
+  return 0;
+}
+
+int testPriorityQueue() {
+  DSALG::TaskKey<int> tK1{"task 1", 100};
+  //cout << tK1._task << endl; 
+  DSALG::PriorityQueue<DSALG::TaskKey<int>> pQ{tK1};
+  
+  cout << pQ.getMaximum()._task << endl; 
+  return 0;
+}
+
 
 int main() {
   
-  assert(testQueue()==0);
+  assert(testPriorityQueue()==0);
+  
+  //assert(testBitwiseOperation()==0);
+
+  //assert(testQueue()==0);
 
   //assert(testBrowseHistory()==0);
 
