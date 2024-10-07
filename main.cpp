@@ -318,10 +318,75 @@ int testPriorityQueue() {
   return 0;
 }
 
+int testBinarySearchTree() {
+  //DSALG::Node<int>* newNode = new DSALG::Node<int>(12);
+  DSALG::BinarySearchTree<int> bST1;
+  bST1.treeInsert(new DSALG::Node<int>(6)); // root
+  bST1.treeInsert(new DSALG::Node<int>(5));
+  bST1.treeInsert(new DSALG::Node<int>(7));
+  bST1.treeInsert(new DSALG::Node<int>(5));
+  bST1.treeInsert(new DSALG::Node<int>(8));
+  bST1.treeInsert(new DSALG::Node<int>(2));
+  
+  printf("in order tree walk...\n"); 
+  bST1.runInOrderTreeWalk();
+  printf("pre order tree walk...\n"); 
+  bST1.runPreOrderTreeWalk();
+  printf("post order tree walk...\n"); 
+  bST1.runPostOrderTreeWalk();
+  
+  DSALG::BinarySearchTree<int> bST2;
+  DSALG::Node<int> testNode{8};
+  bST2.treeInsert(new DSALG::Node<int>(2));
+  bST2.treeInsert(new DSALG::Node<int>(5));
+  bST2.treeInsert(new DSALG::Node<int>(7));
+  bST2.treeInsert(new DSALG::Node<int>(6));
+  //bST2.treeInsert(&testNode);
+  bST2.treeInsert(new DSALG::Node<int>(5));
+  
+  printf("in order tree walk...\n"); 
+  bST2.runInOrderTreeWalk();
+  cout << "iterative tree search for node with key " 
+       << testNode._key << endl;
+  //assert(bST2.iterativeTreeSearch(&testNode) == &testNode);
+  printf("Found? %s\n", 
+      bST2.iterativeTreeSearch(&testNode)?"True":"False");
+
+
+  DSALG::BinarySearchTree<int> bST(new DSALG::Node<int>(12));
+ 
+  DSALG::Node<int>* tNode = new DSALG::Node<int>(11); 
+  DSALG::Node<int>* tNode2 = new DSALG::Node<int>(15); 
+  bST.treeInsert(new DSALG::Node<int>(5));
+  bST.treeInsert(new DSALG::Node<int>(18));
+  //bST.treeInsert(new DSALG::Node<int>(15));
+  bST.treeInsert(tNode2);
+  bST.treeInsert(new DSALG::Node<int>(19));
+  bST.treeInsert(new DSALG::Node<int>(9));
+  bST.treeInsert(new DSALG::Node<int>(10));
+  bST.treeInsert(tNode);
+  bST.treeInsert(new DSALG::Node<int>(2));
+  bST.treeInsert(new DSALG::Node<int>(13));
+  //bST.treeInsert(tNode2);
+  bST.treeInsert(new DSALG::Node<int>(17));
+ 
+  printf("in order tree walk...\n"); 
+  bST.runInOrderTreeWalk();
+  cout << "maximum of key is " << bST.getMaximum()->_key << endl; 
+  cout << "minimum of key is " << bST.getMinimum()->_key << endl; 
+  cout << "successor of key " << tNode->_key 
+       << " is " << bST.getSuccessor(tNode)->_key << endl; 
+  cout << "predecessor of key " << tNode2->_key 
+       << " is " << bST.getPredecessor(tNode2)->_key << endl; 
+  
+  return 0;
+}
 
 int main() {
   
-  assert(testPriorityQueue()==0);
+  assert(testBinarySearchTree()==0);
+  
+  //assert(testPriorityQueue()==0);
   
   //assert(testBitwiseOperation()==0);
 

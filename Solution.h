@@ -682,6 +682,245 @@ namespace DSALG{
     //Queue<T>::enqueue(taskKey);
   }
 
+
+  /* A Node for Binary Search Tree
+   * has attributes Parent, leftChild, and rightChild
+   * */
+  template <typename T>
+  struct Node {
+  T _key; // value store in a Node
+  Node* _parent; // parent node pointer
+  Node* _leftChild; // left-child node pointer
+  Node* _rightChild; // right-child node pointer
+  /* ctor */
+  Node():_parent(nullptr), 
+         _leftChild(nullptr), 
+         _rightChild(nullptr) 
+    { printf("RAII: a node is created\n"); };
+  Node(const T& key):_key(key), 
+                     _parent(nullptr), 
+                     _leftChild(nullptr), 
+                     _rightChild(nullptr) 
+    { cout << "RAII: a node of key "
+                                      << _key
+                                      << " is allocated.\n"; };
+  /* dtor */
+  ~Node() { cout << "RAII: a node of key "
+                 << _key
+                 << " is de-allocated.\n"; };
+  };
+
+
+  /* Binary Search Tree (BST)
+   * is a Organized data strcture
+   *
+   * binary-search-tree property:
+   * Let x be a node in a binary search tree. 
+   * If y is a node in the left subtree of x, then y.key ≤ x.key. 
+   * If y is a node in the right, subtree of x, then y.key ≥ x.key.
+   * */
+  template <typename T>
+  class BinarySearchTree {
+  public:
+    /* ctor */
+    BinarySearchTree():_root(nullptr) {
+      printf("RAII: a binary search tree is allocated\n");
+    };
+    BinarySearchTree(Node<T>* nodePtr):_root(nodePtr) {
+      cout << "RAII: a binary search tree of root with key "
+           << nodePtr->_key
+           << " is allocated\n";
+      _root->_parent = nullptr; // root's parent is nullptr
+    };
+    ~BinarySearchTree() {
+      cout << "RAII: a binary search tree of root with key "
+           << this->_root->_key
+           << " is de-allocated\n"; 
+      delete _root;
+    };
+    void runInOrderTreeWalk();
+    void runPreOrderTreeWalk();
+    void runPostOrderTreeWalk();
+    void inOrderTreeWalk(const Node<T>* node);
+    void preOrderTreeWalk(const Node<T>* node);
+    void postOrderTreeWalk(const Node<T>* node);
+    void treeInsert(Node<T>* node);
+    
+    const Node<T>* iterativeTreeSearch(const Node<T>* node) const; 
+    const Node<T>* getMaximum() const; 
+    const Node<T>* maximum(Node<T>* aRoot) const; 
+    const Node<T>* getMinimum() const; 
+    const Node<T>* minimum(Node<T>* aRoot) const; 
+    const Node<T>* getSuccessor(Node<T>* node) const; 
+    const Node<T>* getPredecessor(Node<T>* node) const; 
+  
+  private:
+    Node<T>* _root; // root node pointer of BST
+
+  };
+
+  
+  template <typename T>
+  void BinarySearchTree<T>::runInOrderTreeWalk() {
+    inOrderTreeWalk(this->_root);
+    cout << "\n"; 
+  };
+  
+  template <typename T>
+  void BinarySearchTree<T>::runPreOrderTreeWalk() {
+    preOrderTreeWalk(this->_root);
+    cout << "\n"; 
+  };
+  
+  template <typename T>
+  void BinarySearchTree<T>::runPostOrderTreeWalk() {
+    postOrderTreeWalk(this->_root);
+    cout << "\n"; 
+  };
+  
+  
+  template <typename T>
+  void BinarySearchTree<T>::inOrderTreeWalk(
+      const Node<T>* node) {
+    if (node != nullptr) {
+      inOrderTreeWalk(node->_leftChild);
+      cout << node->_key << " ";
+      inOrderTreeWalk(node->_rightChild);
+    }
+  };
+  
+  template <typename T>
+  void BinarySearchTree<T>::preOrderTreeWalk(
+      const Node<T>* node) {
+    if (node != nullptr) {
+      cout << node->_key << " ";
+      preOrderTreeWalk(node->_leftChild);
+      preOrderTreeWalk(node->_rightChild);
+    }
+  };
+  
+  template <typename T>
+  void BinarySearchTree<T>::postOrderTreeWalk(
+      const Node<T>* node) {
+    if (node != nullptr) {
+      postOrderTreeWalk(node->_leftChild);
+      postOrderTreeWalk(node->_rightChild);
+      cout << node->_key << " ";
+    }
+  };
+
+  template <typename T>
+  void BinarySearchTree<T>::treeInsert(Node<T>* node) {
+    Node<T>* curNode = _root;
+    Node<T>* curParent = nullptr;
+    
+    /* descend from _root node*/
+    while (curNode!=nullptr) {
+      curParent = curNode; // curNode become new curParent
+      
+      /* check node's key with curNode's key*/
+      if (node->_key < curNode->_key) {
+        curNode = curNode->_leftChild;
+      } else {
+        curNode = curNode->_rightChild;
+      }
+    }
+
+    /* node's parent is updated */
+    node->_parent = curParent;
+    
+    if (curParent == nullptr) {
+      _root = node;
+    } else if (node->_key < curParent->_key) {
+      curParent->_leftChild = node;
+    } else {
+      curParent->_rightChild = node;
+    }
+
+  };
+
+  /* O(h) time complexity 
+   * h is the height of the tree */
+  template <typename T>
+  const Node<T>* BinarySearchTree<T>::iterativeTreeSearch(
+      const Node<T>* node) const {
+    Node<T>* tempNode = _root; // start from _root
+    while (tempNode!=nullptr) {
+      if (node->_key == tempNode->_key) {
+        return node; // found a node
+      } else if (node->_key < tempNode->_key) {
+        tempNode = tempNode->_leftChild; // to left subtree
+      } else {
+        tempNode = tempNode->_rightChild; // to right subtree
+      }
+    }
+    return nullptr; // found no matching node 
+  }; 
+  
+  template <typename T>  
+  const Node<T>* BinarySearchTree<T>::getMaximum() const {
+    return maximum(this->_root);
+  }; 
+ 
+  /* O(h) time complexity */ 
+  template <typename T>
+  const Node<T>* BinarySearchTree<T>::maximum(
+      Node<T>* aRoot) const {
+    Node<T>* tempNode = aRoot;
+    
+    while (tempNode->_rightChild!=nullptr) {
+      tempNode=tempNode->_rightChild;
+    }
+    return tempNode;
+  };
+
+  template <typename T>
+  const Node<T>* BinarySearchTree<T>::getMinimum() const {
+    return minimum(this->_root);
+  };
+
+  template <typename T>
+  const Node<T>* BinarySearchTree<T>::minimum(
+      Node<T>* aRoot) const {
+    Node<T>* tempNode = aRoot;
+    while (tempNode->_leftChild!=nullptr) {
+      tempNode=tempNode->_leftChild;
+    }
+    return tempNode->_parent;
+  }; 
+    
+  template <typename T>
+  const Node<T>* BinarySearchTree<T>::getSuccessor(
+      Node<T>* node) const {
+    if (node->_rightChild) {
+      return minimum(node->_rightChild);  
+    } else {
+      Node<T>* tempNode=node->_parent;
+      while (tempNode!=nullptr and node==tempNode->_rightChild) {
+        node = tempNode;
+        tempNode = tempNode->_parent;
+      }
+      return tempNode;
+    }
+    return nullptr;
+  }; 
+  
+  template <typename T>
+  const Node<T>* BinarySearchTree<T>::getPredecessor(
+      Node<T>* node) const {
+    if (node->_leftChild) {
+      return maximum(node->_leftChild);  
+    } else {
+      Node<T>* tempNode=node->_parent;
+      while (tempNode!=nullptr and node==tempNode->_leftChild) {
+        node = tempNode;
+        tempNode = tempNode->_parent;
+      }
+      return tempNode;
+    }
+    return nullptr;
+  }; 
+
 } /* namespace DSALG */
 
 
