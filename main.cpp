@@ -395,9 +395,24 @@ int testBinarySearchTree() {
   return 0;
 }
 
-int main() {
+int testRandomizedNumber() {
+  srand(time(NULL));
+  auto getRandomizedNumber = 
+    [](int a, int b) { 
+      return (rand()%(b-a+1)+a);
+    };
   
-  assert(testBinarySearchTree()==0);
+  for (auto i=0; i<10; ++i)
+    cout << getRandomizedNumber(0,9) << endl;
+  
+  return 0;
+}
+
+int main() {
+
+  //assert(testRandomizedNumber()==0);
+  
+  //assert(testBinarySearchTree()==0);
   
   //assert(testPriorityQueue()==0);
   
@@ -413,7 +428,7 @@ int main() {
   
   //assert(testStack()==0);
 
-  //assert(testArrayLikeDsAlg()==0);
+  assert(testArrayLikeDsAlg()==0);
 
   //Solution s;
   /*
