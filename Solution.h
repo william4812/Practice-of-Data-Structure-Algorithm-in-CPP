@@ -738,21 +738,24 @@ namespace DSALG{
            << " is de-allocated\n"; 
       delete _root;
     };
-    void runInOrderTreeWalk();
-    void runPreOrderTreeWalk();
-    void runPostOrderTreeWalk();
-    void inOrderTreeWalk(const Node<T>* node);
-    void preOrderTreeWalk(const Node<T>* node);
-    void postOrderTreeWalk(const Node<T>* node);
+    void runInOrderTreeWalk() const;
+    void runPreOrderTreeWalk() const;
+    void runPostOrderTreeWalk() const;
+    void inOrderTreeWalk(const Node<T>* node) const;
+    void preOrderTreeWalk(const Node<T>* node) const;
+    void postOrderTreeWalk(const Node<T>* node) const;
     void treeInsert(Node<T>* node);
+    void treeDelete(Node<T>* node);
+    void relocate(
+        Node<T>* deletedNode, Node<T>* substituteNode);
     
     const Node<T>* iterativeTreeSearch(const Node<T>* node) const; 
-    const Node<T>* getMaximum() const; 
-    const Node<T>* maximum(Node<T>* aRoot) const; 
-    const Node<T>* getMinimum() const; 
-    const Node<T>* minimum(Node<T>* aRoot) const; 
-    const Node<T>* getSuccessor(Node<T>* node) const; 
-    const Node<T>* getPredecessor(Node<T>* node) const; 
+    Node<T>* getMaximum() const; 
+    Node<T>* maximum(Node<T>* aRoot) const; 
+    Node<T>* getMinimum() const; 
+    Node<T>* minimum(Node<T>* aRoot) const; 
+    Node<T>* getSuccessor(Node<T>* node) const; 
+    Node<T>* getPredecessor(Node<T>* node) const; 
   
   private:
     Node<T>* _root; // root node pointer of BST
@@ -761,27 +764,26 @@ namespace DSALG{
 
   
   template <typename T>
-  void BinarySearchTree<T>::runInOrderTreeWalk() {
+  void BinarySearchTree<T>::runInOrderTreeWalk() const {
     inOrderTreeWalk(this->_root);
     cout << "\n"; 
   };
   
   template <typename T>
-  void BinarySearchTree<T>::runPreOrderTreeWalk() {
+  void BinarySearchTree<T>::runPreOrderTreeWalk() const {
     preOrderTreeWalk(this->_root);
     cout << "\n"; 
   };
   
   template <typename T>
-  void BinarySearchTree<T>::runPostOrderTreeWalk() {
+  void BinarySearchTree<T>::runPostOrderTreeWalk() const {
     postOrderTreeWalk(this->_root);
     cout << "\n"; 
   };
   
-  
   template <typename T>
   void BinarySearchTree<T>::inOrderTreeWalk(
-      const Node<T>* node) {
+      const Node<T>* node) const {
     if (node != nullptr) {
       inOrderTreeWalk(node->_leftChild);
       cout << node->_key << " ";
@@ -791,7 +793,7 @@ namespace DSALG{
   
   template <typename T>
   void BinarySearchTree<T>::preOrderTreeWalk(
-      const Node<T>* node) {
+      const Node<T>* node) const {
     if (node != nullptr) {
       cout << node->_key << " ";
       preOrderTreeWalk(node->_leftChild);
@@ -801,7 +803,7 @@ namespace DSALG{
   
   template <typename T>
   void BinarySearchTree<T>::postOrderTreeWalk(
-      const Node<T>* node) {
+      const Node<T>* node) const {
     if (node != nullptr) {
       postOrderTreeWalk(node->_leftChild);
       postOrderTreeWalk(node->_rightChild);
@@ -836,7 +838,78 @@ namespace DSALG{
     } else {
       curParent->_rightChild = node;
     }
+  };
 
+  /*
+   * 3 cases
+   * 1. if curNode has No children, remove curNode simply
+   * 2. if curNode has one child, elevate that child to 
+   * take the position of curNode
+   * 3. curNode has two children -> rightChild as the 
+   * successor of curNode or -> successor of curNode
+   * is at the right subtree*/
+  template <typename T> 
+  void BinarySearchTree<T>::treeDelete(Node<T>* node) {
+    cout << "deleting node of " << node->_key << endl;
+    // case 1. and case 2.
+    // node's rightChild as nullptr
+    if (node->_rightChild==nullptr) {
+      cout << "rightChild as nullptr" << endl;
+      // node is replaced by _leftChild
+      this->relocate(node, node->_leftChild);
+    } 
+    // node's leftChild as nullptr
+    else if (node->_leftChild==nullptr) {
+      cout << "leftChild as nullptr" << endl;
+      this->relocate(node, node->_rightChild);
+    }
+    // case 3.
+    else if (Node<T>* successorNode=this->getSuccessor(node)) {
+      cout << "having both children" << endl;
+      // succeesor of node is Not its_rightChild
+      if (successorNode!=node->_rightChild) {
+        // frist, successor's Right Subtree takes its position
+        relocate(successorNode, successorNode->_rightChild);
+        // second, successor takes node's rightChild position 
+        successorNode->_rightChild = node->_rightChild;
+        successorNode->_rightChild->_parent = successorNode;
+      }
+      // relocate node's current _rightChild to node's position
+      relocate(node, successorNode);
+      // update successorNode's leftChild as node's leftChild
+      successorNode->_leftChild = node->_leftChild;
+      successorNode->_leftChild->_parent = successorNode;
+    }
+
+  };
+  
+  /* replaces one subtree as a child of its parent with 
+   * another subtree*/ 
+  template <typename T> 
+  void BinarySearchTree<T>::relocate(
+      Node<T>* replacedNode, Node<T>* substituteNode
+      ) {
+    cout << "Node of " << replacedNode->_key << " is " 
+         << "replaced..." << endl; 
+    // replacedNode as _root
+    if (replacedNode->_parent==nullptr) {
+      printf("root is replaced\n");
+      this->_root = substituteNode;
+    } 
+    // replacedNode as _leftChild of a node 
+    else if (replacedNode->_parent->_leftChild==replacedNode) {
+      replacedNode->_parent->_leftChild = substituteNode;
+    } 
+    // replacedNode as _rightChild of a node 
+    else if (replacedNode->_parent->_rightChild==replacedNode) {
+      replacedNode->_parent->_rightChild = substituteNode;
+    }
+
+    // updated substituteNode's parent as replacedNode's parent
+    // if it is non null node
+    if (substituteNode != nullptr) {
+      substituteNode->_parent = replacedNode->_parent;
+    }
   };
 
   /* O(h) time complexity 
@@ -844,27 +917,32 @@ namespace DSALG{
   template <typename T>
   const Node<T>* BinarySearchTree<T>::iterativeTreeSearch(
       const Node<T>* node) const {
-    Node<T>* tempNode = _root; // start from _root
-    while (tempNode!=nullptr) {
-      if (node->_key == tempNode->_key) {
+    // start from _root
+    Node<T>* curNode = _root; 
+    
+    while (curNode!=nullptr) {
+      // check if the value is found in curNode 
+      if (node->_key == curNode->_key) {
         return node; // found a node
-      } else if (node->_key < tempNode->_key) {
-        tempNode = tempNode->_leftChild; // to left subtree
-      } else {
-        tempNode = tempNode->_rightChild; // to right subtree
+      } // move down to left subtree
+      else if (node->_key < curNode->_key) {
+        curNode = curNode->_leftChild; 
+      } // move down to right subtree
+      else {
+        curNode = curNode->_rightChild; 
       }
     }
     return nullptr; // found no matching node 
   }; 
   
   template <typename T>  
-  const Node<T>* BinarySearchTree<T>::getMaximum() const {
+  Node<T>* BinarySearchTree<T>::getMaximum() const {
     return maximum(this->_root);
   }; 
  
   /* O(h) time complexity */ 
   template <typename T>
-  const Node<T>* BinarySearchTree<T>::maximum(
+  Node<T>* BinarySearchTree<T>::maximum(
       Node<T>* aRoot) const {
     Node<T>* tempNode = aRoot;
     
@@ -875,22 +953,22 @@ namespace DSALG{
   };
 
   template <typename T>
-  const Node<T>* BinarySearchTree<T>::getMinimum() const {
+  Node<T>* BinarySearchTree<T>::getMinimum() const {
     return minimum(this->_root);
   };
 
   template <typename T>
-  const Node<T>* BinarySearchTree<T>::minimum(
+  Node<T>* BinarySearchTree<T>::minimum(
       Node<T>* aRoot) const {
     Node<T>* tempNode = aRoot;
     while (tempNode->_leftChild!=nullptr) {
       tempNode=tempNode->_leftChild;
     }
-    return tempNode->_parent;
+    return tempNode;
   }; 
     
   template <typename T>
-  const Node<T>* BinarySearchTree<T>::getSuccessor(
+  Node<T>* BinarySearchTree<T>::getSuccessor(
       Node<T>* node) const {
     if (node->_rightChild) {
       return minimum(node->_rightChild);  
@@ -906,7 +984,7 @@ namespace DSALG{
   }; 
   
   template <typename T>
-  const Node<T>* BinarySearchTree<T>::getPredecessor(
+  Node<T>* BinarySearchTree<T>::getPredecessor(
       Node<T>* node) const {
     if (node->_leftChild) {
       return maximum(node->_leftChild);  

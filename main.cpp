@@ -353,32 +353,45 @@ int testBinarySearchTree() {
       bST2.iterativeTreeSearch(&testNode)?"True":"False");
 
 
-  DSALG::BinarySearchTree<int> bST(new DSALG::Node<int>(12));
- 
-  DSALG::Node<int>* tNode = new DSALG::Node<int>(11); 
-  DSALG::Node<int>* tNode2 = new DSALG::Node<int>(15); 
-  bST.treeInsert(new DSALG::Node<int>(5));
+  DSALG::Node<int>* rootNode = new DSALG::Node<int>(12);
+  DSALG::BinarySearchTree<int> bST(rootNode);
+  
+  DSALG::Node<int>* tNode0 = new DSALG::Node<int>(5);
+  bST.treeInsert(tNode0);
   bST.treeInsert(new DSALG::Node<int>(18));
-  //bST.treeInsert(new DSALG::Node<int>(15));
-  bST.treeInsert(tNode2);
-  bST.treeInsert(new DSALG::Node<int>(19));
-  bST.treeInsert(new DSALG::Node<int>(9));
-  bST.treeInsert(new DSALG::Node<int>(10));
-  bST.treeInsert(tNode);
   bST.treeInsert(new DSALG::Node<int>(2));
-  bST.treeInsert(new DSALG::Node<int>(13));
-  //bST.treeInsert(tNode2);
-  bST.treeInsert(new DSALG::Node<int>(17));
+  bST.treeInsert(new DSALG::Node<int>(9));
+  
+  DSALG::Node<int>* tNode1 = new DSALG::Node<int>(15); 
+  bST.treeInsert(tNode1);
  
+  bST.treeInsert(new DSALG::Node<int>(19));
+  DSALG::Node<int>* tNode2 = new DSALG::Node<int>(13); 
+  bST.treeInsert(tNode2);
+  bST.treeInsert(new DSALG::Node<int>(17));
+
   printf("in order tree walk...\n"); 
-  bST.runInOrderTreeWalk();
+  bST.runInOrderTreeWalk(); 
+  
   cout << "maximum of key is " << bST.getMaximum()->_key << endl; 
   cout << "minimum of key is " << bST.getMinimum()->_key << endl; 
-  cout << "successor of key " << tNode->_key 
-       << " is " << bST.getSuccessor(tNode)->_key << endl; 
+  cout << "successor of key " << tNode1->_key 
+       << " is " << bST.getSuccessor(tNode1)->_key << endl; 
   cout << "predecessor of key " << tNode2->_key 
        << " is " << bST.getPredecessor(tNode2)->_key << endl; 
+
+  printf("\nbefore deleting...");
+  printf("in order tree walk...\n"); 
+  bST.runInOrderTreeWalk(); 
   
+  //bST.relocate(tNode2, tNode); 
+  bST.treeDelete(tNode0); 
+  bST.treeDelete(tNode1); 
+  bST.treeDelete(tNode2); 
+  bST.treeDelete(rootNode); 
+  printf("\nafter deleting...");
+  printf("in order tree walk...\n"); 
+  bST.runInOrderTreeWalk();
   return 0;
 }
 
