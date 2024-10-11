@@ -24,7 +24,7 @@ using namespace std;
 
 
 
-namespace DSALG{
+namespace DSALG {
 
 
   /* SLink for singly linked list*/ 
@@ -250,6 +250,15 @@ namespace DSALG{
     int getPivotIndex(T arr[], 
         const int& leftIndex,
         const int& rightIndex);
+    int getRandomizedNumber(const int& iniNum,
+                            const int& endNum) {
+      srand(time(NULL));
+      auto randNum = [](int a, int b) {
+        return (rand()%(b-a+1)+a);
+      };
+      
+      return randNum(iniNum, endNum);
+    };
 
     void countingSort();
     void radixSort();
@@ -482,7 +491,7 @@ namespace DSALG{
      * elements arr[leftIndex: pivotIndex-1] <= arr[pivotIndex]
      * elements arr[pivotIndex+1:rightIndex] > arr[pivotIndex]*/
     int pivotIndex = getPivotIndex(arr, leftIndex, rightIndex);
-    //cout << "here " << pivotIndex << endl; 
+    
     /* subarray Left to pivotIndex */
     runQuickSort(arr, leftIndex, pivotIndex-1);
     
@@ -495,11 +504,16 @@ namespace DSALG{
      const int& leftIndex,
      const int& rightIndex) {
     /* Set initial  pivot index */
+    // randomization
+    auto i = getRandomizedNumber(leftIndex, rightIndex); // rightIndex may be changed 
+    swap(arr[i], arr[rightIndex]);
+    
     auto pivotIndex = rightIndex; // rightIndex may be changed 
     auto pivotLeft = leftIndex-1; // index left to pivot
 
     /* browse elements in arr[0:r-1] */
     for (auto i=leftIndex; i<rightIndex; ++i) {
+      
       /* element smaller than pivot */
       if (arr[i]<=arr[pivotIndex]) {
         /*move smaller element right to pivotLeft*/
@@ -851,31 +865,32 @@ namespace DSALG{
   template <typename T> 
   void BinarySearchTree<T>::treeDelete(Node<T>* node) {
     cout << "deleting node of " << node->_key << endl;
+    
     // case 1. and case 2.
     // node's rightChild as nullptr
     if (node->_rightChild==nullptr) {
-      cout << "rightChild as nullptr" << endl;
-      // node is replaced by _leftChild
       this->relocate(node, node->_leftChild);
     } 
     // node's leftChild as nullptr
     else if (node->_leftChild==nullptr) {
-      cout << "leftChild as nullptr" << endl;
       this->relocate(node, node->_rightChild);
     }
     // case 3.
     else if (Node<T>* successorNode=this->getSuccessor(node)) {
-      cout << "having both children" << endl;
       // succeesor of node is Not its_rightChild
       if (successorNode!=node->_rightChild) {
+      
         // frist, successor's Right Subtree takes its position
         relocate(successorNode, successorNode->_rightChild);
+      
         // second, successor takes node's rightChild position 
         successorNode->_rightChild = node->_rightChild;
         successorNode->_rightChild->_parent = successorNode;
       }
+      
       // relocate node's current _rightChild to node's position
       relocate(node, successorNode);
+      
       // update successorNode's leftChild as node's leftChild
       successorNode->_leftChild = node->_leftChild;
       successorNode->_leftChild->_parent = successorNode;
