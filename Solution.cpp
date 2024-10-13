@@ -11,7 +11,56 @@ using namespace STWO;
 using namespace STHREE;
 using namespace STREE;
 using namespace SHUFFLE;
-using DSALG::ArrayLikeDsAlg;
+using DSA::ArrayLikeDsAlg;
+
+void LEETCODE::merge(vector<int>& nums1, int m,                         
+                     vector<int>& nums2, int n) {
+  vector<int> temp1 {nums1.begin(), nums1.begin()+m};
+  
+  if (m==1 && n==0) return;
+  
+  if (m==0 && n==1) {
+    nums1[0]=nums2[0];
+    return;      
+  }
+
+  int j = 0; // index for temp1  
+  int k = 0; // index for nums2
+  for (auto i=0; i<(m+n); ++i) {
+    //cout << "ijk: " << i << j << k << endl;
+    //for (auto t : nums1) cout << t << " ";
+    //cout << endl;
+    if ((k==n) or (j < m && temp1[j] < nums2[k])) {
+      nums1[i] = temp1[j++];
+    } else if (k < n or j==m) {
+      nums1[i] = nums2[k++];
+    }
+  }
+};
+
+int LEETCODE::removeElement(vector<int>& nums, int val) {
+  int size = nums.size();
+  int count = 0; // count of non-val element
+        
+  int j = 0; // index tracking non-val element
+  for (auto i=0; i<size; ++i) {  
+    ++count;
+    /* find val element*/
+    if (nums[i] == val) {
+      --count;           
+      j = std::max(j, i)+1; // index of an next-to val element
+      for ( ; j<size ; ++j) {
+        /* find next non-val element */
+        if (nums[j]!=nums[i]) {
+          ++count;          
+          swap(nums[i], nums[j]);
+          break;
+        }
+      }
+    }
+  }
+  return count;
+};
 
 
 bool STHREE::hasCycle(STHREE::ListNode* head) {

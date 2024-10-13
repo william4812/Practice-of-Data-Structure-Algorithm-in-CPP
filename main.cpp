@@ -34,7 +34,7 @@ int diff(int a, int b) {
 }
 
 int testArrayLikeDsAlg() {
-  DSALG::ArrayLikeDsAlg<int> aLDAi;
+  DSA::ArrayLikeDsAlg<int> aLDAi;
    
   //int arrI[] {1, 22, 321, 4567, -4, -15};
   int arrI[] {2, 8, 7, 1, 3, 5, 6, 4};
@@ -66,7 +66,7 @@ int testArrayLikeDsAlg() {
   aLDAi.showArray(arrI, arrSize); // -15 -4 1 22 321 4567
  
   /* 
-  DSALG::ArrayLikeDsAlg<double> aLDAd;
+  DSA::ArrayLikeDsAlg<double> aLDAd;
   double arrD[] {1.9, 3.1, 1.99, -321.3, 4567.6, -4.001, 15.56};
   arrSize = sizeof(arrD)/sizeof(double);
   printf("Array of doubles\n");
@@ -84,7 +84,7 @@ int testArrayLikeDsAlg() {
 }
 
 int testDLinkedList() {
-  DSALG::DLinkedList<int> dLLi;
+  DSA::DLinkedList<int> dLLi;
   
   dLLi.showKeys();
 
@@ -111,7 +111,7 @@ int testDLinkedList() {
   dLLi.showKeys();
   
   
-  DSALG::DLinkedList<double> dLLr;
+  DSA::DLinkedList<double> dLLr;
   
   dLLr.showKeys();
 
@@ -141,7 +141,7 @@ int testDLinkedList() {
 }
   
 int testStack() {
-  DSALG::Stack<int> S;
+  DSA::Stack<int> S;
   assert(S.isEmpty()==true);
   cout << "Stack is " 
        << (S.isEmpty()?"empty":"not empty")
@@ -191,7 +191,7 @@ int testStack() {
 
 std::string reverseString(const std::string& strInput) {
   
-  DSALG::Stack<char> strTemp;
+  DSA::Stack<char> strTemp;
   for (const auto& s: strInput) {
     strTemp.push(s);
   }
@@ -215,7 +215,7 @@ int testReversedString() {
 }
 
 int testBrowseHistory() {
-  DSALG::BrowseHistory<std::string> bH;
+  DSA::BrowseHistory<std::string> bH;
   bH.visit("explorecalifornia.org");
   bH.visit("pixelford.com");
   bH.visit("landonotel.com");
@@ -235,7 +235,7 @@ int testBrowseHistory() {
 } 
 
 int testQueue() {
-  DSALG::Queue<int> q(12);
+  DSA::Queue<int> q(12);
   
   cout << "Queue is " << (q.isEmpty()?"empty":"not empty") << endl;
   printf("Enqueue...\n");
@@ -310,23 +310,23 @@ int testBitwiseOperation() {
 }
 
 int testPriorityQueue() {
-  DSALG::TaskKey<int> tK1{"task 1", 100};
+  DSA::TaskKey<int> tK1{"task 1", 100};
   //cout << tK1._task << endl; 
-  DSALG::PriorityQueue<DSALG::TaskKey<int>> pQ{tK1};
+  DSA::PriorityQueue<DSA::TaskKey<int>> pQ{tK1};
   
   cout << pQ.getMaximum()._task << endl; 
   return 0;
 }
 
 int testBinarySearchTree() {
-  //DSALG::Node<int>* newNode = new DSALG::Node<int>(12);
-  DSALG::BinarySearchTree<int> bST1;
-  bST1.treeInsert(new DSALG::Node<int>(6)); // root
-  bST1.treeInsert(new DSALG::Node<int>(5));
-  bST1.treeInsert(new DSALG::Node<int>(7));
-  bST1.treeInsert(new DSALG::Node<int>(5));
-  bST1.treeInsert(new DSALG::Node<int>(8));
-  bST1.treeInsert(new DSALG::Node<int>(2));
+  //DSA::Node<int>* newNode = new DSA::Node<int>(12);
+  DSA::BinarySearchTree<int> bST1;
+  bST1.treeInsert(new DSA::Node<int>(6)); // root
+  bST1.treeInsert(new DSA::Node<int>(5));
+  bST1.treeInsert(new DSA::Node<int>(7));
+  bST1.treeInsert(new DSA::Node<int>(5));
+  bST1.treeInsert(new DSA::Node<int>(8));
+  bST1.treeInsert(new DSA::Node<int>(2));
   
   printf("in order tree walk...\n"); 
   bST1.runInOrderTreeWalk();
@@ -335,14 +335,14 @@ int testBinarySearchTree() {
   printf("post order tree walk...\n"); 
   bST1.runPostOrderTreeWalk();
   
-  DSALG::BinarySearchTree<int> bST2;
-  DSALG::Node<int> testNode{8};
-  bST2.treeInsert(new DSALG::Node<int>(2));
-  bST2.treeInsert(new DSALG::Node<int>(5));
-  bST2.treeInsert(new DSALG::Node<int>(7));
-  bST2.treeInsert(new DSALG::Node<int>(6));
+  DSA::BinarySearchTree<int> bST2;
+  DSA::Node<int> testNode{8};
+  bST2.treeInsert(new DSA::Node<int>(2));
+  bST2.treeInsert(new DSA::Node<int>(5));
+  bST2.treeInsert(new DSA::Node<int>(7));
+  bST2.treeInsert(new DSA::Node<int>(6));
   //bST2.treeInsert(&testNode);
-  bST2.treeInsert(new DSALG::Node<int>(5));
+  bST2.treeInsert(new DSA::Node<int>(5));
   
   printf("in order tree walk...\n"); 
   bST2.runInOrderTreeWalk();
@@ -353,22 +353,22 @@ int testBinarySearchTree() {
       bST2.iterativeTreeSearch(&testNode)?"True":"False");
 
 
-  DSALG::Node<int>* rootNode = new DSALG::Node<int>(12);
-  DSALG::BinarySearchTree<int> bST(rootNode);
+  DSA::Node<int>* rootNode = new DSA::Node<int>(12);
+  DSA::BinarySearchTree<int> bST(rootNode);
   
-  DSALG::Node<int>* tNode0 = new DSALG::Node<int>(5);
+  DSA::Node<int>* tNode0 = new DSA::Node<int>(5);
   bST.treeInsert(tNode0);
-  bST.treeInsert(new DSALG::Node<int>(18));
-  bST.treeInsert(new DSALG::Node<int>(2));
-  bST.treeInsert(new DSALG::Node<int>(9));
+  bST.treeInsert(new DSA::Node<int>(18));
+  bST.treeInsert(new DSA::Node<int>(2));
+  bST.treeInsert(new DSA::Node<int>(9));
   
-  DSALG::Node<int>* tNode1 = new DSALG::Node<int>(15); 
+  DSA::Node<int>* tNode1 = new DSA::Node<int>(15); 
   bST.treeInsert(tNode1);
  
-  bST.treeInsert(new DSALG::Node<int>(19));
-  DSALG::Node<int>* tNode2 = new DSALG::Node<int>(13); 
+  bST.treeInsert(new DSA::Node<int>(19));
+  DSA::Node<int>* tNode2 = new DSA::Node<int>(13); 
   bST.treeInsert(tNode2);
-  bST.treeInsert(new DSALG::Node<int>(17));
+  bST.treeInsert(new DSA::Node<int>(17));
 
   printf("in order tree walk...\n"); 
   bST.runInOrderTreeWalk(); 
@@ -409,7 +409,7 @@ int testRandomizedNumber() {
 }
 
 int testHashTable() {
-  DSALG::HashTable<int> hT;
+  DSA::HashTable<int> hT;
 
   cout << hT.divHash(6, 4) << endl;
   assert(hT.divHash(6, 4)==2);
@@ -430,9 +430,59 @@ int testHashTable() {
   return 0;
 }
 
+int testLEETCODE() {
+  //vector<int> nums1 {1,2,3,0,0,0};
+  //int m = 3;
+  //vector<int> nums2 {2,5,6};
+  //int n = 3;
+
+  //vector<int> nums1 {1};
+  //int m = 1;
+  //vector<int> nums2 {};
+  //int n = 0;
+  
+  //vector<int> nums1 {0};
+  //int m = 0;
+  //vector<int> nums2 {1};
+  //int n = 1;
+  
+  //vector<int> nums1 {2,0};
+  //int m = 1;
+  //vector<int> nums2 {1};
+  //int n = 1;
+  //
+  //for (auto t : nums1) cout << t << " ";
+  //cout << "\n m: " << m << endl;
+  //
+  //for (auto t : nums2) cout << t << " ";
+  //cout << "\n n: " << n << endl;
+
+  //LEETCODE::merge(nums1, m, nums2, n);
+  //for (const auto& i : nums1) {
+  //  cout << i << " ";
+  //}
+  //cout << endl;
+ 
+  //vector<int> nums {3,2,2,3};
+  //int val {3};
+  
+  vector<int> nums {0,1,2,2,3,0,4,2};
+  int val {2};
+
+  cout << " number of non-val elements: " 
+       << LEETCODE::removeElement(nums, val) << endl;
+  
+  for (const auto& i : nums) {
+    cout << i << " ";
+  }
+  cout << endl;
+
+  return 0;
+}
+
 int main() {
 
-  assert(testHashTable()==0);
+  assert(testLEETCODE()==0);
   
   //assert(testRandomizedNumber()==0);
   

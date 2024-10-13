@@ -24,7 +24,7 @@ using namespace std;
 
 
 
-namespace DSALG {
+namespace DSA {
 
 
   /* SLink for singly linked list 
@@ -1050,9 +1050,15 @@ namespace DSALG {
   };
 
 
-} /* namespace DSALG */
+} /* namespace DSA */
 
+namespace LEETCODE {
 
+  void merge(vector<int>& nums1, int m, 
+             vector<int>& nums2, int n);
+
+  int removeElement(vector<int>& nums, int val);
+} 
 
 namespace T {
   bool uTest(vector<int>& vT, int& ans);
