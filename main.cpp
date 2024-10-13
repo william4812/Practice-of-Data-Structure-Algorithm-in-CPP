@@ -408,8 +408,32 @@ int testRandomizedNumber() {
   return 0;
 }
 
+int testHashTable() {
+  DSALG::HashTable<int> hT;
+
+  cout << hT.divHash(6, 4) << endl;
+  assert(hT.divHash(6, 4)==2);
+  
+  cout << hT.multHash(6, 4, 0.8) << endl;
+  
+
+  const int k = 123456; 
+  const int wBits = 32; 
+  const int lBits = 14;
+  const int long a = 2654435769;
+  cout << hT.multShiftHash(k, wBits, lBits, a) << endl;
+  cout << hT.multShiftHash(123456 /* k */, 
+                          32 /* wBits */, 
+                          14 /* lBits*/,
+                          2654435769 /* a */) << endl;
+  
+  return 0;
+}
+
 int main() {
 
+  assert(testHashTable()==0);
+  
   //assert(testRandomizedNumber()==0);
   
   //assert(testBinarySearchTree()==0);
@@ -428,7 +452,7 @@ int main() {
   
   //assert(testStack()==0);
 
-  assert(testArrayLikeDsAlg()==0);
+  //assert(testArrayLikeDsAlg()==0);
 
   //Solution s;
   /*

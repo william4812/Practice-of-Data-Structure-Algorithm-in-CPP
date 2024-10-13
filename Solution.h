@@ -27,7 +27,9 @@ using namespace std;
 namespace DSALG {
 
 
-  /* SLink for singly linked list*/ 
+  /* SLink for singly linked list 
+   * This class also serves a base class
+   * for doubly linked list */ 
   template <typename T>
   struct SLink {
     T _value;
@@ -505,8 +507,8 @@ namespace DSALG {
      const int& rightIndex) {
     /* Set initial  pivot index */
     // randomization
-    auto i = getRandomizedNumber(leftIndex, rightIndex); // rightIndex may be changed 
-    swap(arr[i], arr[rightIndex]);
+    auto j = getRandomizedNumber(leftIndex, rightIndex); // rightIndex may be changed 
+    swap(arr[j], arr[rightIndex]);
     
     auto pivotIndex = rightIndex; // rightIndex may be changed 
     auto pivotLeft = leftIndex-1; // index left to pivot
@@ -535,7 +537,8 @@ namespace DSALG {
     cout << "\n";
   }
 
-  /* class Stack is LIFO data structure */
+  /* class Stack is LIFO data structure 
+   * inheriting from vector class */
   template <typename T>
   class Stack : public vector<T> {
   public:
@@ -1013,6 +1016,39 @@ namespace DSALG {
     }
     return nullptr;
   }; 
+
+  template <typename T>
+  class HashTable {
+  public:
+    int indepUniformHashing(const int& key); // not implemented
+
+    /* static hashing functions */
+    int divHash(const int& k, const int& m) {return (k%m);};
+    int multHash(const int& k, const int& m, const double& A) {
+      return floor(m*((k*A) - floor(k*A)));
+    };
+    long int multShiftHash(const int& k, 
+                      const int& wBits,
+                      const int& lBits,
+                      const long int& a);
+
+    /* random hashing functions */
+
+  private:
+    int _key;
+    T*  _valuePtr;
+  };
+
+
+  template <typename T>
+  long int HashTable<T>::multShiftHash(const int& k,
+      const int& wBits,
+      const int& lBits,
+      const long int& a) {
+      //cout << ((k * a) % (long int)pow(2,wBits)) << endl;
+    return ((k*a) % (long int)pow(2,wBits)) >> (wBits - lBits);
+  };
+
 
 } /* namespace DSALG */
 
