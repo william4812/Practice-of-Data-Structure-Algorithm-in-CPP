@@ -41,7 +41,6 @@ void LEETCODE::merge(vector<int>& nums1, int m,
 int LEETCODE::removeElement(vector<int>& nums, int val) {
   int size = nums.size();
   int count = 0; // count of non-val element
-        
   int j = 0; // index tracking non-val element
   for (auto i=0; i<size; ++i) {  
     ++count;
@@ -62,6 +61,17 @@ int LEETCODE::removeElement(vector<int>& nums, int val) {
   return count;
 };
 
+int LEETCODE::removeDuplicates(vector<int>& nums) {      
+  int ref = 0;
+  int nSize = nums.size();
+
+  for (int i=ref; i<nSize; ++i) {
+    if (nums[i]>nums[ref]) {
+      nums[++ref] = nums[i];
+    }
+  }
+  return (ref+1);
+};
 
 bool STHREE::hasCycle(STHREE::ListNode* head) {
   if (!head /*empty node*/ || !(head->next) /*single node*/)
