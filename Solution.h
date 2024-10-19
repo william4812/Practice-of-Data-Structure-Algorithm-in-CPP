@@ -1062,6 +1062,8 @@ namespace LEETCODE {
   int removeDuplicates(vector<int>& nums);
 
   int removeDuplicates2(vector<int>& nums);
+
+  int majorityElement(vector<int>& nums);
 } 
 
 namespace T {

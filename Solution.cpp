@@ -74,8 +74,7 @@ int LEETCODE::removeDuplicates(vector<int>& nums) {
 };
 
 int LEETCODE::removeDuplicates2(vector<int>& nums) {
-  int i =0;
-        
+  int i =0;      
   for(auto ele : nums) {
     if(i==0 || i==1 || nums[i-2] != ele) {
       nums[i++] = ele;
@@ -83,6 +82,49 @@ int LEETCODE::removeDuplicates2(vector<int>& nums) {
   }
   return i;
 };
+
+/*
+Given an array nums of size n, return the majority element.
+The majority element is the element that appears more 
+than ⌊n/2⌋ times. You may assume that the majority 
+element always exists in the array.
+*/
+int LEETCODE::majorityElement(vector<int>& nums) {
+
+  /* 
+   * This method is to find and return the 
+   * statistical Mode, i.e., the most frequently 
+   * occuring element in dataset, i.e., nums.
+   * */
+  typedef long long int llint;
+  typedef unsigned long long int ullint;
+  std::map<llint, ullint> keyCount;
+  
+  // time complexity: O( n * log n ) 
+  // O(log n) from method find() in map
+  // space complexity: O(n) from map
+  for (const auto& key : nums) {
+    // found key in keyCount
+    if (keyCount.find(key) != keyCount.end()) {
+      keyCount[key]++;
+    } 
+    // not found, add key to keyCount 
+    else {
+      keyCount[key] = 1;
+    }
+  }
+  
+  for (const auto& pair : keyCount) {
+    //std::cout << pair.first << " " << pair.second << std::endl;
+    if (pair.second > floor(nums.size()*0.5)) {
+      return static_cast<int>(pair.first);
+    }
+  }
+  cout << "ERROR!\n";
+  exit(-1);
+  //return static_cast<int>(nums.size());
+};
+
 
 bool STHREE::hasCycle(STHREE::ListNode* head) {
   if (!head /*empty node*/ || !(head->next) /*single node*/)

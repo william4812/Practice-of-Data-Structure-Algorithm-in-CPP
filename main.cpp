@@ -486,15 +486,20 @@ int testLEETCODE() {
   
   //vector<int> nums {1,1,1};
   //vector<int> nums {1,2,2};
-  vector<int> nums {1,1,2,2};
+  //vector<int> nums {1,1,2,2};
   //vector<int> nums {1,1,1,2,2,3};
   //vector<int> nums {0,0,1,1,1,1,2,3,3};
-  int size = LEETCODE::removeDuplicates2(nums);
-  for (auto i=0;i<size;++i) {
-    cout << nums[i] << " ";
-  }
-  cout << endl;
+  //int size = LEETCODE::removeDuplicates2(nums);
+  //for (auto i=0;i<size;++i) {
+  //  cout << nums[i] << " ";
+  //}
+  //cout << endl;
   
+  //vector<int> nums {3,2,3};
+  //vector<int> nums {2,2,1,1,1,2,2};
+  vector<int> nums {1,3,1,1,4,1,1,5,1,1,6,2,2};
+  cout << "running majorityElement...\n" 
+       << LEETCODE::majorityElement(nums) << endl;
 
   return 0;
 }
