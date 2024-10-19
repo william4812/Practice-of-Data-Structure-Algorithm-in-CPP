@@ -1060,6 +1060,8 @@ namespace LEETCODE {
   int removeElement(vector<int>& nums, int val);
 
   int removeDuplicates(vector<int>& nums);
+
+  int removeDuplicates2(vector<int>& nums);
 } 
 
 namespace T {

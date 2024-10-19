@@ -73,6 +73,17 @@ int LEETCODE::removeDuplicates(vector<int>& nums) {
   return (ref+1);
 };
 
+int LEETCODE::removeDuplicates2(vector<int>& nums) {
+  int i =0;
+        
+  for(auto ele : nums) {
+    if(i==0 || i==1 || nums[i-2] != ele) {
+      nums[i++] = ele;
+    }
+  }
+  return i;
+};
+
 bool STHREE::hasCycle(STHREE::ListNode* head) {
   if (!head /*empty node*/ || !(head->next) /*single node*/)
     return false;
