@@ -431,6 +431,18 @@ int testHashTable() {
 }
 
 int testLEETCODE() {
+  //vector<int> nums{1,2,3,4,5,6,7};
+  //int k = 3;
+  //vector<int> nums{-1,-100,3,99};
+  //int k = 2;
+  //vector<int> nums{-1};
+  //int k = 2;
+  vector<int> nums{1,2};
+  int k = 3;
+  LEETCODE::rotate(nums, k);
+  for (const auto& c : nums) cout << c << " ";
+  cout << endl;
+
   //vector<int> nums1 {1,2,3,0,0,0};
   //int m = 3;
   //vector<int> nums2 {2,5,6};
@@ -497,15 +509,26 @@ int testLEETCODE() {
   
   //vector<int> nums {3,2,3};
   //vector<int> nums {2,2,1,1,1,2,2};
-  vector<int> nums {1,3,1,1,4,1,1,5,1,1,6,2,2};
-  cout << "running majorityElement...\n" 
-       << LEETCODE::majorityElement(nums) << endl;
+  //vector<int> nums {1,3,1,1,4,1,1,5,1,1,6,2,2};
+  //cout << "running majorityElement...\n" 
+  //     << LEETCODE::majorityElement(nums) << endl;
 
+  return 0;
+}
+
+int testRBBinarySearchTree() {
+  //DSA::RBNode<int> rbNode1{1, DSA::Color::Red};
+  //DSA::RBNode<int> rbNode2{2, DSA::Color::Black};
+  
+  DSA::RBBinarySearchTree<int> rBBst {100};
+  
   return 0;
 }
 
 int main() {
 
+  //assert(testRBBinarySearchTree()==0);
+ 
   assert(testLEETCODE()==0);
   
   //assert(testRandomizedNumber()==0);

@@ -753,7 +753,7 @@ namespace DSA {
       cout << "RAII: a binary search tree of root with key "
            << this->_root->_key
            << " is de-allocated\n"; 
-      delete _root;
+      //delete _root;
     };
     void runInOrderTreeWalk() const;
     void runPreOrderTreeWalk() const;
@@ -1017,6 +1017,66 @@ namespace DSA {
     return nullptr;
   }; 
 
+
+  /*
+   * Red-Black Node
+   * strct RBNode is derived from struct Node
+   * */
+  enum class Color {Red=0, Black};
+  template <typename T>
+  struct RBNode : public Node<T> {
+    std::string _color;
+    Color _enumColor;
+    /* ctors */
+    RBNode(const T& key, const std::string& color) 
+      : Node<T>(key), 
+        _color(color), 
+        _enumColor(color=="Red"?Color::Red:Color::Black) { 
+      cout << "RAII, allocation of RBNode (key, color) = " 
+           << "(" << Node<T>::_key << "," 
+           << (_enumColor==Color::Red?"Red":"Black") << ")\n"; 
+    };
+    RBNode(const T& key, Color enumColor) 
+      : Node<T>(key), 
+        _color(enumColor==Color::Red?"Red":"Black"), 
+        _enumColor(enumColor) { 
+      cout << "RAII, allocation of RBNode (key, color) = " 
+           << "(" << Node<T>::_key << "," 
+           << _color << ")\n"; 
+    };
+    /* dtor */
+    ~RBNode() {
+      cout << "RAII, de-allocation of RBNode (key, color) = " 
+           << "(" << Node<T>::_key << "," 
+           << _color << ")\n"; 
+    };
+  };
+
+  /*
+   * Red-Black Binary Search Tree (RBBst)
+   * the RBBst is approximately balanced
+   * */
+  template <typename T>
+  class RBBinarySearchTree /*: BinarySearchTree<T>*/ {
+  private:
+    RBNode<T> _root;
+  public:
+    /* ctors */
+    RBBinarySearchTree(const T& key) : 
+      _root(RBNode<T>(key, Color::Black)) {
+      cout << "RAII, allocation of RBBst with root of (key, color) = " 
+           << "(" << _root._key << "," 
+           << _root._color << ")\n"; 
+    };
+    /* dtor */
+    ~RBBinarySearchTree() {
+      cout << "RAII, de-allocation of RBBst with root of (key, color) = " 
+           << "(" << _root._key << "," 
+           << _root._color << ")\n";
+    }; 
+  };
+
+
   template <typename T>
   class HashTable {
   public:
@@ -1064,6 +1124,8 @@ namespace LEETCODE {
   int removeDuplicates2(vector<int>& nums);
 
   int majorityElement(vector<int>& nums);
+
+  void rotate(vector<int>& nums, int k);
 } 
 
 namespace T {
