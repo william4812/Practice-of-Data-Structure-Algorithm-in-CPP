@@ -520,16 +520,18 @@ int testRBBinarySearchTree() {
   //DSA::RBNode<int> rbNode1{1, DSA::Color::Red};
   //DSA::RBNode<int> rbNode2{2, DSA::Color::Black};
   
-  DSA::RBBinarySearchTree<int> rBBst {100};
-  
+  //DSA::RBBinarySearchTree<int> rbBst; // empty root
+
+  DSA::RBBinarySearchTree<int> rbBst {11}; // root with key 11
+  //rbBst.rbInsert 
   return 0;
 }
 
 int main() {
 
-  //assert(testRBBinarySearchTree()==0);
+  assert(testRBBinarySearchTree()==0);
  
-  assert(testLEETCODE()==0);
+  //assert(testLEETCODE()==0);
   
   //assert(testRandomizedNumber()==0);
   

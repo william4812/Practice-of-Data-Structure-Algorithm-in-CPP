@@ -1028,6 +1028,10 @@ namespace DSA {
     std::string _color;
     Color _enumColor;
     /* ctors */
+    RBNode() {
+      cout << "RAII, allocation of RBNode of " 
+           << "nullptr\n"; 
+    }; 
     RBNode(const T& key, const std::string& color) 
       : Node<T>(key), 
         _color(color), 
@@ -1036,7 +1040,7 @@ namespace DSA {
            << "(" << Node<T>::_key << "," 
            << (_enumColor==Color::Red?"Red":"Black") << ")\n"; 
     };
-    RBNode(const T& key, Color enumColor) 
+    RBNode(const T& key, const Color& enumColor) 
       : Node<T>(key), 
         _color(enumColor==Color::Red?"Red":"Black"), 
         _enumColor(enumColor) { 
@@ -1052,30 +1056,114 @@ namespace DSA {
     };
   };
 
+
   /*
    * Red-Black Binary Search Tree (RBBst)
    * the RBBst is approximately balanced
+   * satisﬁes the following red-black properties:
+   *  1. Every node is either red or black.
+   *  2. The root is black.
+   *  3. Every leaf (NIL) is black.
+   *  4. If a node is red, then both its children are black.
+   *  5. For each node, all simple paths from the node to 
+   *  descendant leaves contain the same number of black nodes.
    * */
   template <typename T>
   class RBBinarySearchTree /*: BinarySearchTree<T>*/ {
   private:
-    RBNode<T> _root;
+    RBNode<T>* _root;
   public:
     /* ctors */
+    RBBinarySearchTree():_root(nullptr) {
+      cout << "RAII, allocation of RBBst with root of " 
+           << "nullptr\n"; 
+    }; 
     RBBinarySearchTree(const T& key) : 
-      _root(RBNode<T>(key, Color::Black)) {
+      _root( new RBNode<T>(key, Color::Black) ) {
       cout << "RAII, allocation of RBBst with root of (key, color) = " 
-           << "(" << _root._key << "," 
-           << _root._color << ")\n"; 
+           << "(" << _root->_key << "," 
+           << _root->_color << ")\n"; 
     };
     /* dtor */
     ~RBBinarySearchTree() {
       cout << "RAII, de-allocation of RBBst with root of (key, color) = " 
-           << "(" << _root._key << "," 
-           << _root._color << ")\n";
+           << "(" << _root->_key << "," 
+           << _root->_color << ")\n";
+      delete _root;
     }; 
+  
+    void leftRotation();
+    void rightRotation();
+    void rbInsert(RBNode<T>* curNode);
+    void rbInsertFixup(RBNode<T>* curNode);
   };
 
+  template <typename T>
+  void RBBinarySearchTree<T>::rbInsert(RBNode<T>* curNode) 
+  {
+    RBNode<T>* tempNode = this->_root;
+    RBNode<T>* tempParent = nullptr; // sentinel
+
+    /* descend until reaching sentinel */
+    while (tempNode != nullptr) {
+      tempParent = tempNode;
+      
+      if (curNode->_key < tempNode->_key) {
+        tempNode = tempNode->_leftChild;
+      } else {
+        tempNode = tempNode->_rightChild;
+      }
+    }
+    /* found the location - insert curNode*/
+    curNode->_parent = tempParent;
+    
+    /* if tree is empty */
+    if (tempParent == nullptr) {
+      this->_root = curNode;
+    } else if (curNode->_key < tempParent->_key) {
+      tempParent->_leftChild = curNode; 
+    } else {
+      tempParent->_rightChild = curNode;
+    }
+
+    /* both of z's children are the sentinel */
+    curNode->_leftChild = curNode->_rightChild = nullptr;
+    
+    /* new node is Red*/
+    curNode->_eumColor = Color::Red;
+    
+    /* correct any violation of RB properties */
+    rbInsertFixup(curNode); 
+  };
+  
+  template <typename T>
+  void RBBinarySearchTree<T>::rbInsertFixup(RBNode<T>* curNode) 
+  { 
+    while (curNode->_curParent->_color == Color::Red) {
+      /* is curNode's parent a leftChild? */
+      if (curNode->_parent == curNode->_parent->_parent->_left) 
+      {
+        RBNode<T>* uncleNode = 
+          curNode->_parent->_parent->_rightChild;
+        
+        /* both uncle and parent are of Red */
+        if (uncleNode->_color == Color::Red) {
+          curNode->_parent->_color = Color::Black;
+          uncleNode->_parent->_color = Color::Black;
+          curNode->_parent->_parent->_color = Color::Red;
+          curNode = curNode->_parent->_parent;
+        } 
+        /* */
+        else {
+        }
+      } 
+      /* is curNode's parent a rightChild? */
+      else {
+      
+      }
+
+    }
+  };
 
   template <typename T>
   class HashTable {
