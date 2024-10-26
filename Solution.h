@@ -1028,7 +1028,7 @@ namespace DSA {
     std::string _color;
     Color _enumColor;
     /* ctors */
-    RBNode() {
+    RBNode() : _enumColor(Color::Black) {
       cout << "RAII, allocation of RBNode of " 
            << "nullptr\n"; 
     }; 
@@ -1092,15 +1092,109 @@ namespace DSA {
       delete _root;
     }; 
   
-    void leftRotation();
-    void rightRotation();
+    void inOrderTreeWalk(RBNode<T>* node);
+    void inOrderTreeWalkRoot();
+    
+    void leftRotation(RBNode<T>* pivotNode);
+    void rightRotation(RBNode<T>* pivotNode);
     void rbInsert(RBNode<T>* curNode);
     void rbInsertFixup(RBNode<T>* curNode);
+    void showKeyColor(RBNode<T>* node) const {
+      cout << "(" << node->_key << ","
+           << (node->_enumColor==Color::Red?"Red":"Black")
+           << ")" << endl;
+    };
   };
 
   template <typename T>
-  void RBBinarySearchTree<T>::rbInsert(RBNode<T>* curNode) 
-  {
+  void RBBinarySearchTree<T>::inOrderTreeWalkRoot() {
+    RBNode<T>* node = this->_root;
+    if (node != nullptr) {              
+      inOrderTreeWalk(static_cast<RBNode<T>*>(node->_leftChild));                        
+      cout << "root-";
+      showKeyColor(node);                                
+      inOrderTreeWalk(static_cast<RBNode<T>*>(node->_rightChild));                       
+    }                                                           
+  };
+  
+  template <typename T>
+  void RBBinarySearchTree<T>::inOrderTreeWalk(RBNode<T>* node) {      
+    if (node != nullptr) {              
+      inOrderTreeWalk(static_cast<RBNode<T>*>(node->_leftChild));                        
+      showKeyColor(node);                                
+      inOrderTreeWalk(static_cast<RBNode<T>*>(node->_rightChild));                       
+    }                                                           
+  };
+
+  template <typename T>
+  void RBBinarySearchTree<T>::leftRotation(RBNode<T>* pivotNode) {
+    RBNode<T>* tempRightChild = pivotNode->_rightChild;
+    
+    /* turn tempRightChild's LEFT subtree into
+     * pivotNode's RIGHT subtree */
+    pivotNode->_rightChild = tempRightChild->_leftChild;
+    if (tempRightChild->_leftChild != nullptr) {
+      /* update the parent of LEFT subtree */
+      tempRightChild->_leftChild->_parent = pivotNode;
+    }
+
+    /* update tempRightChild's parent to pivotNode's parent */
+    tempRightChild->_parent = pivotNode->_parent; 
+    /* pivotNode as root */
+    if (pivotNode->_parent == nullptr) {
+      this->_root = tempRightChild;
+    } 
+    /* pivotNode as leftChild */
+    else if (pivotNode == pivotNode->_parent->_leftChild) {
+      pivotNode->_parent->_leftChild = tempRightChild;
+    }
+    /* pivotNode as rightChild */
+    else if (pivotNode == pivotNode->_parent->_rightChild) {
+      pivotNode->_parent->_rightChild = tempRightChild;
+    }
+    
+    /* set pivotNode as tempRightChild's leftChild */
+    pivotNode = tempRightChild->_leftChild;
+    /* set tempRightChild as pivotNode'parent */
+    pivotNode->_parent = tempRightChild;
+  };
+
+  template <typename T>
+  void RBBinarySearchTree<T>::rightRotation(RBNode<T>* pivotNode) {
+    RBNode<T>* tempLeftChild = pivotNode->_leftChild;
+    
+    /* set tempLeftChild's Right subtree as
+     * pivotNode's Left subtree */
+    pivotNode->_leftChild = tempLeftChild->_rightChild;
+    /* _non empty Right subtree*/
+    if (tempLeftChild->_rightChild != nullptr) {
+      /* update the parent of LEFT subtree */
+      tempLeftChild->_rightChild->_parent = pivotNode;
+    }
+
+    /* update tempLeftChild's parent to pivotNode's parent */
+    tempLeftChild->_parent = pivotNode->_parent; 
+    /* pivotNode as root */
+    if (pivotNode->_parent == nullptr) {
+      this->_root = tempLeftChild;
+    } 
+    /* pivotNode was leftChild */
+    else if (pivotNode == pivotNode->_parent->_leftChild) {
+      pivotNode->_parent->_leftChild = tempLeftChild;
+    }
+    /* pivotNode was rightChild */
+    else if (pivotNode == pivotNode->_parent->_rightChild) {
+      pivotNode->_parent->_rightChild = tempLeftChild;
+    }
+    
+    /* set pivotNode as tempLeftChild's rightChild */
+    pivotNode = tempLeftChild->_rightChild;
+    /* set tempLeftChild as pivotNode'parent */
+    pivotNode->_parent = tempLeftChild;
+  };
+
+  template <typename T>
+  void RBBinarySearchTree<T>::rbInsert(RBNode<T>* curNode) {
     RBNode<T>* tempNode = this->_root;
     RBNode<T>* tempParent = nullptr; // sentinel
 
@@ -1135,7 +1229,8 @@ namespace DSA {
     /* correct any violation of RB properties */
     rbInsertFixup(curNode); 
   };
-  
+ 
+  /* recolor nodes and perform rotation */ 
   template <typename T>
   void RBBinarySearchTree<T>::rbInsertFixup(RBNode<T>* curNode) 
   { 

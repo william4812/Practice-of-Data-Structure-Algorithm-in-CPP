@@ -523,6 +523,11 @@ int testRBBinarySearchTree() {
   //DSA::RBBinarySearchTree<int> rbBst; // empty root
 
   DSA::RBBinarySearchTree<int> rbBst {11}; // root with key 11
+  
+  printf("\nIn order tree walk...\n");
+  rbBst.inOrderTreeWalkRoot();
+  printf("\n\n");
+
   //rbBst.rbInsert 
   return 0;
 }
