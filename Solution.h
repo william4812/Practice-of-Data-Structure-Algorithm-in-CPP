@@ -1023,37 +1023,77 @@ namespace DSA {
    * strct RBNode is derived from struct Node
    * */
   enum class Color {Red=0, Black};
+
   template <typename T>
-  struct RBNode : public Node<T> {
+  struct RBNode {
+    T _key; // value store in a RBNode
+    RBNode* _parent; // parent RBNode pointer
+    RBNode* _leftChild; // left-child RBNode pointer
+    RBNode* _rightChild; // right-child RBNode pointer
     std::string _color;
     Color _enumColor;
-    /* ctors */
-    RBNode() : _enumColor(Color::Black) {
-      cout << "RAII, allocation of RBNode of " 
-           << "nullptr\n"; 
-    }; 
-    RBNode(const T& key, const std::string& color) 
-      : Node<T>(key), 
-        _color(color), 
-        _enumColor(color=="Red"?Color::Red:Color::Black) { 
-      cout << "RAII, allocation of RBNode (key, color) = " 
-           << "(" << Node<T>::_key << "," 
-           << (_enumColor==Color::Red?"Red":"Black") << ")\n"; 
-    };
-    RBNode(const T& key, const Color& enumColor) 
-      : Node<T>(key), 
-        _color(enumColor==Color::Red?"Red":"Black"), 
-        _enumColor(enumColor) { 
-      cout << "RAII, allocation of RBNode (key, color) = " 
-           << "(" << Node<T>::_key << "," 
-           << _color << ")\n"; 
-    };
+    
+    /* ctor */
+    RBNode();
+    RBNode(const T& key, const std::string& color);
+    RBNode(const T& key, const Color& enumColor);
+
     /* dtor */
     ~RBNode() {
       cout << "RAII, de-allocation of RBNode (key, color) = " 
-           << "(" << Node<T>::_key << "," 
+           << "(" << _key << "," 
            << _color << ")\n"; 
     };
+  };
+
+  template<typename T> 
+  RBNode<T>* nil = new RBNode<T>();
+
+  template <typename T> 
+  void initNilNode() {
+    nil<T>->_enumColor = Color::Black;
+    nil<T>->_leftChild 
+      = nil<T>->_rightChild 
+      = nil<T>->_parent 
+      = nil<T>;
+  };
+    
+  /* ctors of struct RBNode */
+  template <typename T>
+  RBNode<T>::RBNode():_parent(nullptr), 
+                   _leftChild(nullptr), 
+                   _rightChild(nullptr),
+                   _enumColor(Color::Black) {
+ 
+    cout << "RAII, allocation of RBNode of " 
+         << "nullptr\n";
+  }
+    
+  template <typename T>
+  RBNode<T>::RBNode(const T& key, const std::string& color) 
+      : _key(key),
+        _parent(nil<T>),     
+        _leftChild(nil<T>),
+        _rightChild(nil<T>),
+        _color(color), 
+        _enumColor(color=="Red"?Color::Red:Color::Black) {
+    cout << "RAII, allocation of RBNode (key, color) = "
+         << "(" << _key << "," 
+         << (_enumColor==Color::Red?"Red":"Black") << ")\n";
+  }
+    
+  template <typename T>
+  RBNode<T>::RBNode(const T& key, const Color& enumColor) 
+      : _key(key), 
+        _parent(nil<T>),     
+        _leftChild(nil<T>),
+        _rightChild(nil<T>),
+        _color(enumColor==Color::Red?"Red":"Black"), 
+        _enumColor(enumColor) {
+    initNilNode<T>();
+    cout << "RAII, allocation of RBNode (key, color) = " 
+         << "(" << _key << "," 
+         << _color << ")\n"; 
   };
 
 
@@ -1074,7 +1114,8 @@ namespace DSA {
     RBNode<T>* _root;
   public:
     /* ctors */
-    RBBinarySearchTree():_root(nullptr) {
+    RBBinarySearchTree():_root(nil<T>) {
+      initNilNode<T>();
       cout << "RAII, allocation of RBBst with root of " 
            << "nullptr\n"; 
     }; 
@@ -1089,7 +1130,7 @@ namespace DSA {
       cout << "RAII, de-allocation of RBBst with root of (key, color) = " 
            << "(" << _root->_key << "," 
            << _root->_color << ")\n";
-      delete _root;
+      postOrderTreeDelete(_root);
     }; 
   
     void inOrderTreeWalk(RBNode<T>* node);
@@ -1103,13 +1144,24 @@ namespace DSA {
       cout << "(" << node->_key << ","
            << (node->_enumColor==Color::Red?"Red":"Black")
            << ")" << endl;
-    };
+    }
+    void postOrderTreeDelete(const RBNode<T>* curNode);
   };
 
   template <typename T>
+  void RBBinarySearchTree<T>::postOrderTreeDelete(
+      const RBNode<T>* curNode) {
+    if (curNode != nil<T>) {
+      postOrderTreeDelete(curNode->_leftChild);
+      postOrderTreeDelete(curNode->_rightChild);
+      delete curNode;
+    }
+  };
+  
+  template <typename T>
   void RBBinarySearchTree<T>::inOrderTreeWalkRoot() {
     RBNode<T>* node = this->_root;
-    if (node != nullptr) {              
+    if (node != nil<T>) {              
       inOrderTreeWalk(static_cast<RBNode<T>*>(node->_leftChild));                        
       cout << "root-";
       showKeyColor(node);                                
@@ -1119,7 +1171,7 @@ namespace DSA {
   
   template <typename T>
   void RBBinarySearchTree<T>::inOrderTreeWalk(RBNode<T>* node) {      
-    if (node != nullptr) {              
+    if (node != nil<T>) {              
       inOrderTreeWalk(static_cast<RBNode<T>*>(node->_leftChild));                        
       showKeyColor(node);                                
       inOrderTreeWalk(static_cast<RBNode<T>*>(node->_rightChild));                       
@@ -1128,12 +1180,13 @@ namespace DSA {
 
   template <typename T>
   void RBBinarySearchTree<T>::leftRotation(RBNode<T>* pivotNode) {
-    RBNode<T>* tempRightChild = pivotNode->_rightChild;
+    RBNode<T>* tempRightChild 
+      = static_cast<RBNode<T>*>(pivotNode->_rightChild);
     
     /* turn tempRightChild's LEFT subtree into
      * pivotNode's RIGHT subtree */
     pivotNode->_rightChild = tempRightChild->_leftChild;
-    if (tempRightChild->_leftChild != nullptr) {
+    if (tempRightChild->_leftChild != nil<T>) {
       /* update the parent of LEFT subtree */
       tempRightChild->_leftChild->_parent = pivotNode;
     }
@@ -1141,7 +1194,7 @@ namespace DSA {
     /* update tempRightChild's parent to pivotNode's parent */
     tempRightChild->_parent = pivotNode->_parent; 
     /* pivotNode as root */
-    if (pivotNode->_parent == nullptr) {
+    if (pivotNode->_parent == nil<T>) {
       this->_root = tempRightChild;
     } 
     /* pivotNode as leftChild */
@@ -1154,20 +1207,21 @@ namespace DSA {
     }
     
     /* set pivotNode as tempRightChild's leftChild */
-    pivotNode = tempRightChild->_leftChild;
+    tempRightChild->_leftChild = pivotNode;
     /* set tempRightChild as pivotNode'parent */
     pivotNode->_parent = tempRightChild;
   };
 
   template <typename T>
   void RBBinarySearchTree<T>::rightRotation(RBNode<T>* pivotNode) {
-    RBNode<T>* tempLeftChild = pivotNode->_leftChild;
+    RBNode<T>* tempLeftChild 
+      = static_cast<RBNode<T>*>(pivotNode->_leftChild);
     
     /* set tempLeftChild's Right subtree as
      * pivotNode's Left subtree */
     pivotNode->_leftChild = tempLeftChild->_rightChild;
-    /* _non empty Right subtree*/
-    if (tempLeftChild->_rightChild != nullptr) {
+    /* non empty Right subtree*/
+    if (tempLeftChild->_rightChild != nil<T>) {
       /* update the parent of LEFT subtree */
       tempLeftChild->_rightChild->_parent = pivotNode;
     }
@@ -1175,7 +1229,7 @@ namespace DSA {
     /* update tempLeftChild's parent to pivotNode's parent */
     tempLeftChild->_parent = pivotNode->_parent; 
     /* pivotNode as root */
-    if (pivotNode->_parent == nullptr) {
+    if (pivotNode->_parent == nil<T>) {
       this->_root = tempLeftChild;
     } 
     /* pivotNode was leftChild */
@@ -1188,43 +1242,58 @@ namespace DSA {
     }
     
     /* set pivotNode as tempLeftChild's rightChild */
-    pivotNode = tempLeftChild->_rightChild;
+    tempLeftChild->_rightChild = pivotNode;
     /* set tempLeftChild as pivotNode'parent */
     pivotNode->_parent = tempLeftChild;
   };
 
   template <typename T>
   void RBBinarySearchTree<T>::rbInsert(RBNode<T>* curNode) {
-    RBNode<T>* tempNode = this->_root;
-    RBNode<T>* tempParent = nullptr; // sentinel
+    /* root */
+    RBNode<T>* tempNode = this->_root; 
+    /* sentinel as root's parent */
+    RBNode<T>* tempParent = nil<T>;
 
-    /* descend until reaching sentinel */
-    while (tempNode != nullptr) {
+    /* descend until reaching leaf as sentinel */
+    while (tempNode != nil<T>) {
       tempParent = tempNode;
-      
+     
+      /* node with smaller key than */ 
       if (curNode->_key < tempNode->_key) {
-        tempNode = tempNode->_leftChild;
+        /* set leftChild as tempNode */
+        tempNode = static_cast<RBNode<T>*>(tempNode->_leftChild);
       } else {
-        tempNode = tempNode->_rightChild;
+        /* set rightChild as tempNode */
+        tempNode = static_cast<RBNode<T>*>(tempNode->_rightChild);
       }
     }
-    /* found the location - insert curNode*/
+
+    /* update on curNode
+     * set tempParent as curNode's parent 
+     * when finding location to insert curNode */
     curNode->_parent = tempParent;
     
-    /* if tree is empty */
-    if (tempParent == nullptr) {
+    /* update on tempParent, i.e., curNode's parent
+     * if tree is empty */
+    if (tempParent == nil<T>) {
       this->_root = curNode;
-    } else if (curNode->_key < tempParent->_key) {
+    } 
+    /* curNode with smaller key than it's parent */
+    else if (curNode->_key < tempParent->_key) {
+      /* set curNode as it's parent's leftChild */
       tempParent->_leftChild = curNode; 
-    } else {
+    } 
+    /* curNode with larger key than it's parent */
+    else {
+      /* set curNode as it's parent's rightChild */
       tempParent->_rightChild = curNode;
     }
 
-    /* both of z's children are the sentinel */
-    curNode->_leftChild = curNode->_rightChild = nullptr;
+    /* set both of z's children as leaves of sentinel */
+    curNode->_leftChild = curNode->_rightChild = nil<T>;
     
-    /* new node is Red*/
-    curNode->_eumColor = Color::Red;
+    /* new node is Red */
+    curNode->_enumColor = Color::Red;
     
     /* correct any violation of RB properties */
     rbInsertFixup(curNode); 
@@ -1233,31 +1302,79 @@ namespace DSA {
   /* recolor nodes and perform rotation */ 
   template <typename T>
   void RBBinarySearchTree<T>::rbInsertFixup(RBNode<T>* curNode) 
-  { 
-    while (curNode->_curParent->_color == Color::Red) {
-      /* is curNode's parent a leftChild? */
-      if (curNode->_parent == curNode->_parent->_parent->_left) 
-      {
-        RBNode<T>* uncleNode = 
-          curNode->_parent->_parent->_rightChild;
+  {
+    showKeyColor(curNode); 
+    cout << "here " << endl;
+    /* violation - curNode's parent is Red */ 
+    while (curNode->_parent->_enumColor == Color::Red) {
+      
+      /* curNode's parent as a leftChild */
+      if (curNode->_parent == 
+          curNode->_parent->_parent->_leftChild) {
         
-        /* both uncle and parent are of Red */
-        if (uncleNode->_color == Color::Red) {
-          curNode->_parent->_color = Color::Black;
-          uncleNode->_parent->_color = Color::Black;
-          curNode->_parent->_parent->_color = Color::Red;
-          curNode = curNode->_parent->_parent;
+        RBNode<T>* uncleNode = 
+          static_cast<RBNode<T>*>(curNode->_parent->_parent->_rightChild);
+        
+        /* uncle and parent are of both Red */
+        if (uncleNode->_enumColor == Color::Red) {
+          /* Correction - set parent and uncle's black  */
+          static_cast<RBNode<T>*>(curNode->_parent)->_enumColor 
+            = static_cast<RBNode<T>*>(uncleNode->_parent)->_enumColor 
+            = Color::Black;
+          
+          /* set grandparent red as */
+          static_cast<RBNode<T>*>(curNode->_parent->_parent)->_enumColor = Color::Red;
+          /* ascend to grandparent's level */
+          curNode = static_cast<RBNode<T>*>(curNode->_parent->_parent);
         } 
-        /* */
+        /* uncle is Not Red */
         else {
+          if (curNode==curNode->_parent->_rightChild) {
+            /* ascend to it's parent */
+            curNode = static_cast<RBNode<T>*>(curNode->_parent);
+            leftRotation(curNode);
+          } 
+          static_cast<RBNode<T>*>(curNode->_parent)->_enumColor 
+            = Color::Black;
+          static_cast<RBNode<T>*>(curNode->_parent->_parent)->_enumColor 
+            = Color::Red; 
+          rightRotation(static_cast<RBNode<T>*>(curNode->_parent->_parent));
         }
       } 
-      /* is curNode's parent a rightChild? */
+      /* curNode's parent as a rightChild? */
       else {
-      
+        RBNode<T>* uncleNode = 
+          curNode->_parent->_parent->_leftChild;
+        showKeyColor(uncleNode); 
+        /* uncle and parent are both of Red */
+        if (uncleNode->_enumColor == Color::Red) {
+          /* Correction - set parent and uncle's black  */
+          static_cast<RBNode<T>*>(curNode->_parent)->_enumColor 
+            = static_cast<RBNode<T>*>(uncleNode->_parent)->_enumColor 
+            = Color::Black;
+          
+          /* set grandparent red as */
+          static_cast<RBNode<T>*>(curNode->_parent->_parent)->_enumColor 
+            = Color::Red;
+          /* ascend to grandparent's level */
+          curNode = static_cast<RBNode<T>*>(curNode->_parent->_parent);
+        } 
+        /* uncle is Not Red */
+        else {
+          if (curNode==curNode->_parent->_leftChild) {
+            /* ascend to it's parent */
+            curNode = static_cast<RBNode<T>*>(curNode->_parent);
+            rightRotation(curNode);
+          } 
+          static_cast<RBNode<T>*>(curNode->_parent)->_enumColor 
+            = Color::Black;
+          static_cast<RBNode<T>*>(curNode->_parent->_parent)->_enumColor 
+            = Color::Red; 
+          leftRotation(static_cast<RBNode<T>*>(curNode->_parent->_parent));
+        }
       }
-
     }
+    this->_root->_enumColor = Color::Black;
   };
 
   template <typename T>

@@ -517,17 +517,32 @@ int testLEETCODE() {
 }
 
 int testRBBinarySearchTree() {
-  //DSA::RBNode<int> rbNode1{1, DSA::Color::Red};
-  //DSA::RBNode<int> rbNode2{2, DSA::Color::Black};
+  
+  DSA::RBNode<int>* rbNode1 = new DSA::RBNode<int>(11, DSA::Color::Black);
+  DSA::RBNode<int>* rbNode2 = new DSA::RBNode<int>(15, DSA::Color::Red);
+  DSA::RBNode<int>* rbNode3 = new DSA::RBNode<int>(2, DSA::Color::Black);
+  DSA::RBNode<int>* rbNode4 = new DSA::RBNode<int>(1, DSA::Color::Black);
+  DSA::RBNode<int>* rbNode5 = new DSA::RBNode<int>(7, DSA::Color::Black);
+  DSA::RBNode<int>* rbNode6 = new DSA::RBNode<int>(14, DSA::Color::Black);
+  DSA::RBNode<int>* rbNode7 = new DSA::RBNode<int>(5, DSA::Color::Red);
+  DSA::RBNode<int>* rbNode8 = new DSA::RBNode<int>(4, DSA::Color::Red);
   
   //DSA::RBBinarySearchTree<int> rbBst; // empty root
+  DSA::RBBinarySearchTree<int> rbBst {8}; // root with key 11
+  rbBst.rbInsert(rbNode1);
+  rbBst.rbInsert(rbNode2);
+  rbBst.rbInsert(rbNode3);
+  rbBst.rbInsert(rbNode4);
+  rbBst.rbInsert(rbNode5);
+  rbBst.rbInsert(rbNode6);
+  rbBst.rbInsert(rbNode7);
+  rbBst.rbInsert(rbNode8);
 
-  DSA::RBBinarySearchTree<int> rbBst {11}; // root with key 11
-  
   printf("\nIn order tree walk...\n");
   rbBst.inOrderTreeWalkRoot();
   printf("\n\n");
 
+  //DSA::RBNode<int> rbNode1{4, DSA::Color::Red};
   //rbBst.rbInsert 
   return 0;
 }
