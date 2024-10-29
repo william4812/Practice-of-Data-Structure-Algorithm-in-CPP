@@ -1279,7 +1279,7 @@ namespace DSA {
       this->_root = curNode;
     } 
     /* curNode with smaller key than it's parent */
-    else if (curNode->_key < tempParent->_key) {
+    else if ((curNode->_key) < (tempParent->_key)) {
       /* set curNode as it's parent's leftChild */
       tempParent->_leftChild = curNode; 
     } 
@@ -1309,68 +1309,61 @@ namespace DSA {
     while (curNode->_parent->_enumColor == Color::Red) {
       
       /* curNode's parent as a leftChild */
-      if (curNode->_parent == 
-          curNode->_parent->_parent->_leftChild) {
+      if ((curNode->_parent) == (curNode->_parent->_parent->_leftChild)) {
         
-        RBNode<T>* uncleNode = 
-          static_cast<RBNode<T>*>(curNode->_parent->_parent->_rightChild);
+        RBNode<T>* uncleNode = curNode->_parent->_parent->_rightChild;
         
         /* uncle and parent are of both Red */
-        if (uncleNode->_enumColor == Color::Red) {
+        if ((uncleNode->_enumColor) == Color::Red) {
           /* Correction - set parent and uncle's black  */
-          static_cast<RBNode<T>*>(curNode->_parent)->_enumColor 
-            = static_cast<RBNode<T>*>(uncleNode->_parent)->_enumColor 
-            = Color::Black;
+          curNode->_parent->_enumColor = 
+            uncleNode->_enumColor = 
+            Color::Black;
           
-          /* set grandparent red as */
-          static_cast<RBNode<T>*>(curNode->_parent->_parent)->_enumColor = Color::Red;
+          /* set grandparent red */
+          curNode->_parent->_parent->_enumColor = Color::Red;
           /* ascend to grandparent's level */
-          curNode = static_cast<RBNode<T>*>(curNode->_parent->_parent);
+          curNode = curNode->_parent->_parent;
         } 
         /* uncle is Not Red */
         else {
-          if (curNode==curNode->_parent->_rightChild) {
+          if (curNode==(curNode->_parent->_rightChild)) {
             /* ascend to it's parent */
-            curNode = static_cast<RBNode<T>*>(curNode->_parent);
+            curNode = curNode->_parent;
             leftRotation(curNode);
           } 
-          static_cast<RBNode<T>*>(curNode->_parent)->_enumColor 
-            = Color::Black;
-          static_cast<RBNode<T>*>(curNode->_parent->_parent)->_enumColor 
-            = Color::Red; 
-          rightRotation(static_cast<RBNode<T>*>(curNode->_parent->_parent));
+          curNode->_parent->_enumColor = Color::Black;
+          curNode->_parent->_parent->_enumColor = Color::Red; 
+          rightRotation(curNode->_parent->_parent);
         }
       } 
       /* curNode's parent as a rightChild? */
       else {
-        RBNode<T>* uncleNode = 
-          curNode->_parent->_parent->_leftChild;
+        RBNode<T>* uncleNode = curNode->_parent->_parent->_leftChild;
         showKeyColor(uncleNode); 
         /* uncle and parent are both of Red */
         if (uncleNode->_enumColor == Color::Red) {
           /* Correction - set parent and uncle's black  */
-          static_cast<RBNode<T>*>(curNode->_parent)->_enumColor 
-            = static_cast<RBNode<T>*>(uncleNode->_parent)->_enumColor 
+          curNode->_parent->_enumColor 
+            = uncleNode->_enumColor 
             = Color::Black;
           
-          /* set grandparent red as */
-          static_cast<RBNode<T>*>(curNode->_parent->_parent)->_enumColor 
+          /* set grandparent red */
+          curNode->_parent->_parent->_enumColor
             = Color::Red;
           /* ascend to grandparent's level */
-          curNode = static_cast<RBNode<T>*>(curNode->_parent->_parent);
+          curNode = curNode->_parent->_parent;
         } 
         /* uncle is Not Red */
         else {
-          if (curNode==curNode->_parent->_leftChild) {
+          if (curNode==(curNode->_parent->_leftChild)) {
             /* ascend to it's parent */
-            curNode = static_cast<RBNode<T>*>(curNode->_parent);
+            curNode = curNode->_parent;
             rightRotation(curNode);
           } 
-          static_cast<RBNode<T>*>(curNode->_parent)->_enumColor 
-            = Color::Black;
-          static_cast<RBNode<T>*>(curNode->_parent->_parent)->_enumColor 
-            = Color::Red; 
-          leftRotation(static_cast<RBNode<T>*>(curNode->_parent->_parent));
+          curNode->_parent->_enumColor = Color::Black;
+          curNode->_parent->_parent->_enumColor = Color::Red; 
+          leftRotation(curNode->_parent->_parent);
         }
       }
     }
