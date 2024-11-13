@@ -23,6 +23,79 @@ using namespace std;
 #define HEADER_H_SOLUTION
 
 
+/* creational design pattern */
+namespace CREATIONAL_DP {
+
+  /* factory method pattern using 
+   * coffee machine and coffee.
+   * */
+  // base class as abstract class
+  class Coffee {
+  protected:
+    char _type[20];
+  public:
+    char* getType() {
+      return _type;
+    };  
+  };
+
+  // derived class as concrete class
+  class Espresso : public Coffee {
+  public:
+    /* ctor */
+    Espresso() : Coffee() {
+    strcpy(_type, "Espresso");
+    cout << "\nMaking a cup of " << _type;
+    cout << "\nGrind and brew one scoop of espresso beans\n";
+    }
+  };
+ 
+  // derived class as concrete class 
+  class Cappuccino : public Coffee {
+  public:
+    /* ctor */
+    Cappuccino() : Coffee() {
+    strcpy(_type, "Cappuccino");
+    cout << "\nMaking a cup of " << _type;
+    cout << "\nGrind and brew one scoop of espresso beans\n";
+    cout << "\nHeat and foam milk\n";
+    }
+  };
+
+
+  class CoffeeMakerFactory {
+  private:
+    Coffee* _coffee;
+  public:
+    Coffee* getCoffee() {
+      int choice;
+
+      cout << "Select type of coffee to make: " << endl;
+      cout << "1: Espresso" << endl;
+      cout << "2: Cappucino" << endl;
+      cin >> choice;
+
+      switch (choice) {
+      case(1):
+          return (new Espresso);
+          break;
+      case(2):
+          return (new Cappuccino);
+          break;
+      default:
+          return nullptr;
+          break;
+      }
+    }
+  };
+}
+
+
+
+namespace UTILITY_BINARY_OPERATION {
+}
+
+
 
 namespace DSA {
 
@@ -1111,6 +1184,7 @@ namespace DSA {
   template <typename T>
   class RBBinarySearchTree /*: BinarySearchTree<T>*/ {
   private:
+    //RBNode<T>* _nil;
     RBNode<T>* _root;
   public:
     /* ctors */
@@ -1135,18 +1209,184 @@ namespace DSA {
   
     void inOrderTreeWalk(RBNode<T>* node);
     void inOrderTreeWalkRoot();
-    
     void leftRotation(RBNode<T>* pivotNode);
     void rightRotation(RBNode<T>* pivotNode);
     void rbInsert(RBNode<T>* curNode);
     void rbInsertFixup(RBNode<T>* curNode);
-    void showKeyColor(RBNode<T>* node) const {
-      cout << "(" << node->_key << ","
-           << (node->_enumColor==Color::Red?"Red":"Black")
-           << ")" << endl;
-    }
+    void showKeyColor(RBNode<T>* node) const;
     void postOrderTreeDelete(const RBNode<T>* curNode);
+    void rbRelocate(RBNode<T>* oldNode, RBNode<T>* newNode);
+    void rbDelete(RBNode<T>* deletedNode);
+    void rbDeleteFixup(RBNode<T>* Node);
+    RBNode<T>* treeMinimum(RBNode<T>* node);
+    RBNode<T>* getMinimum();
+    RBNode<T>* treeMaximum(RBNode<T>* node);
+    RBNode<T>* getMaximum();
   };
+   
+
+  template <typename T>
+  void RBBinarySearchTree<T>::rbDeleteFixup(RBNode<T>* Node) {
+    while (  (Node != (this->_root)) && 
+            ((Node->_enumColor)==Color::Black) ) {
+      // check Node as leftChild
+      if (Node == Node->_parent->_leftChild) {
+        RBNode<T>* sibling = Node->_parent->_rightChild;
+
+        if ((sibling->_enumColor) == Color::Red) {
+          sibling->_enumColor = Color::Black;
+          Node->_parent->_enumColor = Color::Red;
+          leftRotation(Node->_parent);
+          sibling = Node->_parent->_rightChild;
+        }
+
+        if ((sibling->_leftChild->_enumColor) == Color::Black &&
+            (sibling->_rightChild->_enumColor) == Color::Black) {
+          sibling->_enumColor = Color::Red;
+          Node = Node->_parent; 
+        } else {
+          
+          if (sibling->_rightChild->_enumColor == Color::Black) {
+            sibling->_leftChild->_enumColor = Color::Black;
+            sibling->_enumColor = Color::Red;
+            rightRotation(sibling);
+            sibling = Node->_parent->_rightChild;
+          }
+          sibling->_enumColor = Node->_parent->_enumColor;
+          Node->_parent->_enumColor = Color::Black;
+          sibling->_rightChild->_enumColor = Color::Black;
+          leftRotation(Node->_parent);
+          Node = this->_root;
+        }
+      }
+      else {
+        RBNode<T>* sibling = Node->_parent->_leftChild;
+
+        if ((sibling->_enumColor) == Color::Red) {
+          sibling->_enumColor = Color::Black;
+          Node->_parent->_enumColor = Color::Red;
+          rightRotation(Node->_parent);
+          sibling = Node->_parent->_leftChild;
+        }
+
+        if ((sibling->_rightChild->_enumColor) == Color::Black &&
+            (sibling->_leftChild->_enumColor) == Color::Black) {
+          sibling->_enumColor = Color::Red;
+          Node = Node->_parent; 
+        } else {
+          
+          if (sibling->_leftChild->_enumColor == Color::Black) {
+            sibling->_rightChild->_enumColor = Color::Black;
+            sibling->_enumColor = Color::Red;
+            leftRotation(sibling);
+            sibling = Node->_parent->_leftChild;
+          }
+          sibling->_enumColor = Node->_parent->_enumColor;
+          Node->_parent->_enumColor = Color::Black;
+          sibling->_leftChild->_enumColor = Color::Black;
+          rightRotation(Node->_parent);
+          Node = this->_root;
+        }
+      }
+    }
+    Node->_enumColor = Color::Black;
+  };
+
+  template <typename T>
+  RBNode<T>* RBBinarySearchTree<T>::getMinimum() {
+    return treeMinimum(this->_root);
+  };
+  
+  template <typename T>
+  RBNode<T>* RBBinarySearchTree<T>::getMaximum() {
+    return treeMaximum(this->_root);
+  };
+
+  template <typename T>
+  RBNode<T>* RBBinarySearchTree<T>::treeMinimum(
+      RBNode<T>* node) {
+    while (node->_leftChild != nil<T>) {
+      node = node->_leftChild;
+    }
+    return node;
+  };
+  
+  template <typename T>
+  RBNode<T>* RBBinarySearchTree<T>::treeMaximum(
+      RBNode<T>* node) {
+    while (node->_rightChild != nil<T>) {
+      node = node->_rightChild;
+    }
+    return node;
+  };
+  
+  template <typename T>
+  void RBBinarySearchTree<T>::rbDelete(
+      RBNode<T>* deletedNode) {
+    RBNode<T>* tempNode = deletedNode;
+    Color tempNodeColor = tempNode->_enumColor;
+    RBNode<T>* tempChild;
+    
+    if (deletedNode->_leftChild == nil<T>) {
+      tempChild = deletedNode->_rightChild;
+      rbRelocate(deletedNode,
+                 deletedNode->_rightChild);
+    } else if (deletedNode->_rightChild == nil<T>) {
+      tempChild = deletedNode->_leftChild;
+      rbRelocate(deletedNode,
+                 deletedNode->_leftChild);
+    } else { 
+        tempNode = treeMinimum(deletedNode->_rightChild);
+        tempNodeColor = tempNode->_enumColor;
+        tempChild = tempNode->_rightChild;
+
+        if (tempNode != deletedNode->_rightChild) {
+          rbRelocate(tempNode,
+                     tempNode->_rightChild);
+          tempNode->_rightChild = deletedNode->_rightChild;
+          tempNode->_rightChild->_parent = tempNode;
+        } else {
+          tempChild->_parent = tempNode;
+        }
+         
+        rbRelocate(deletedNode, tempNode);
+        tempNode->_leftChild = deletedNode->_leftChild;
+        tempNode->_leftChild->_parent = tempNode;
+        tempNode->_enumColor = deletedNode->_enumColor;
+    }
+
+    if (tempNodeColor == Color::Black) {
+      rbDeleteFixup(tempChild);
+    }
+  };
+    
+  template <typename T>
+  void RBBinarySearchTree<T>::rbRelocate(RBNode<T>* oldNode, 
+                                         RBNode<T>* newNode) {
+    // oldNode as root node
+    if (oldNode->_parent == nil<T>) {
+      this->_root = newNode;
+    } 
+    // oldNode as a leftChild
+    else if ( oldNode == (oldNode->_parent->_leftChild) ) {
+      oldNode->_parent->_leftChild = newNode;
+    } 
+    // oldNode as a rightChlild
+    else if ( oldNode == (oldNode->_parent->_rightChild) ) {
+      oldNode->_parent->_rightChild = newNode;
+    }
+
+    // update newNode's parent
+    newNode->_parent = oldNode->_parent;
+  };
+
+  template <typename T>
+  void RBBinarySearchTree<T>::showKeyColor(RBNode<T>* node) 
+  const {
+    cout << "(" << node->_key << ","
+         << (node->_enumColor==Color::Red?"Red":"Black")
+         << ")" << endl; 
+  }
 
   template <typename T>
   void RBBinarySearchTree<T>::postOrderTreeDelete(

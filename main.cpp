@@ -541,15 +541,57 @@ int testRBBinarySearchTree() {
   printf("\nIn order tree walk...\n");
   rbBst.inOrderTreeWalkRoot();
   printf("\n\n");
+ 
+  printf("get minimum...\n");
+  cout << rbBst.getMinimum()->_key << endl;
+  printf("get maximum...\n");
+  cout << rbBst.getMaximum()->_key << endl;
+  
+  printf("Removing nodes\n");
+  //rbBst.rbDelete(rbNode1);
+  //rbBst.rbDelete(rbNode2);
+  //rbBst.rbDelete(rbNode4);
+  rbBst.rbDelete(rbNode5);
+  //rbBst.rbDelete(rbNode7);
+  //rbBst.rbDelete(rbNode8);
+  
+  printf("\nIn order tree walk...\n");
+  rbBst.inOrderTreeWalkRoot();
+  printf("\n\n");
 
-  //DSA::RBNode<int> rbNode1{4, DSA::Color::Red};
-  //rbBst.rbInsert 
+  return 0;
+}
+
+int testPatternMatching(const std::string& compStr ) {
+  std::regex email_regex("[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,4}");
+  if (std::regex_match(compStr, email_regex)) {
+    printf("Valid email address\n");
+    return 0;
+  }
+  
+  printf("Invalid email address\n");
+  return 1;
+}
+
+int testCreationalDP() {
+  CREATIONAL_DP::CoffeeMakerFactory coffeeMaker;
+  CREATIONAL_DP::Coffee* coffeePtr = coffeeMaker.getCoffee();
+  if (coffeePtr==nullptr) {
+    printf("Invalid drink\n");
+  } else {
+    printf("The drink is %s.\n",coffeePtr->getType());
+  }
+    
   return 0;
 }
 
 int main() {
+  
+  assert(testCreationalDP()==0);
+  
+  //assert(testPatternMatching("williams19834812@gmail.com")==0);
 
-  assert(testRBBinarySearchTree()==0);
+  //assert(testRBBinarySearchTree()==0);
  
   //assert(testLEETCODE()==0);
   
