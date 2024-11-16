@@ -26,6 +26,15 @@ using namespace std;
 /* creational design pattern */
 namespace CREATIONAL_DP {
 
+  // base class of factory 
+  class Factory {
+  private:
+    std::string _name;
+  public:
+    Factory() {}; // ctor
+  };
+
+
   /* factory method pattern using 
    * coffee machine and coffee.
    * */
@@ -34,60 +43,265 @@ namespace CREATIONAL_DP {
   protected:
     char _type[20];
   public:
-    char* getType() {
-      return _type;
-    };  
+    Coffee() {}; // ctor
+    ~Coffee() {}; // dtor
+    char* getType(); 
   };
+
 
   // derived class as concrete class
   class Espresso : public Coffee {
   public:
     /* ctor */
-    Espresso() : Coffee() {
-    strcpy(_type, "Espresso");
-    cout << "\nMaking a cup of " << _type;
-    cout << "\nGrind and brew one scoop of espresso beans\n";
-    }
+    Espresso();
   };
  
+
   // derived class as concrete class 
   class Cappuccino : public Coffee {
   public:
     /* ctor */
-    Cappuccino() : Coffee() {
-    strcpy(_type, "Cappuccino");
-    cout << "\nMaking a cup of " << _type;
-    cout << "\nGrind and brew one scoop of espresso beans\n";
-    cout << "\nHeat and foam milk\n";
-    }
+    Cappuccino();
   };
+ 
 
-
-  class CoffeeMakerFactory {
+  class CoffeeMakerFactory : public Factory {
   private:
-    Coffee* _coffee;
+  
   public:
-    Coffee* getCoffee() {
-      int choice;
-
-      cout << "Select type of coffee to make: " << endl;
-      cout << "1: Espresso" << endl;
-      cout << "2: Cappucino" << endl;
-      cin >> choice;
-
-      switch (choice) {
-      case(1):
-          return (new Espresso);
-          break;
-      case(2):
-          return (new Cappuccino);
-          break;
-      default:
-          return nullptr;
-          break;
-      }
-    }
+    Coffee* getCoffee();
+  }; 
+  
+   
+  // base class as abstract class
+  class Door {
+  protected:
+    std::string _name;
+  public:
+    /* ctor */
+    Door() {};
+    virtual void open() = 0;
   };
+ 
+
+  // derived, concrete class as gas car door
+  class GasCarDoor : public Door {
+  public:
+    GasCarDoor() : Door() { 
+      _name = "Gas car door";
+      printf("making a %s...\n", _name.c_str()); 
+    }; // ctor
+    void open() {cout << "gas door opens" << endl;};
+  };
+
+
+  // derived, concrete class as electric car door
+  class ElectricCarDoor : public Door {
+  public:
+    ElectricCarDoor() : Door() {
+      _name = "Electric car door";
+      printf("making a %s...\n", _name.c_str()); 
+      }; // ctor
+    void open() {cout << "electric door opens" << endl;};
+  };
+
+  // base class as abstrct class
+  class Powertrain {
+  protected:
+    std::string _name;
+  public:
+    /* ctor */
+    Powertrain() {};
+    virtual void start() = 0;
+  };
+ 
+
+  // derived, concrete class as engine
+  class Engine : public Powertrain {
+  public:
+    Engine() : Powertrain() { 
+      _name = "engine";
+      printf("making a(n) %s...\n", _name.c_str()); 
+    }; // ctor
+    void start() { printf("%s starts\n", _name.c_str()); };
+  };
+
+
+  // derived, concrete class as door
+  class Motor : public Powertrain {
+  public:
+    Motor() : Powertrain() { 
+      _name = "Motor";
+      printf("making a(n) %s...\n", _name.c_str()); 
+      }; // ctor
+    void start() { printf("%s starts\n", _name.c_str()); };
+  };
+
+
+  class Car {
+  protected:
+    string _name;
+  };
+
+  // base class for vehicle
+  class CarMakerFactory : public Factory {
+  protected:
+    Car* _car;
+  public:
+    //vehicle* getVehicle();
+    virtual Door* buildDoor() = 0;
+    virtual Powertrain* buildPowertrain() = 0;
+  };
+
+  class GasCarMakerFactory : public CarMakerFactory {
+  private:
+  public:
+    GasCarMakerFactory() {};// ctor
+    Door* buildDoor() {return ( new GasCarDoor() );};
+    Powertrain* buildPowertrain() { return (new Engine());};
+  };
+  
+  
+  class ElectricCarMakerFactory : public CarMakerFactory {
+  private:
+  public:
+    ElectricCarMakerFactory() {};// ctor
+    Door* buildDoor() {return ( new ElectricCarDoor() );};
+    Powertrain* buildPowertrain() { return (new Motor());};
+  };
+
+
+  // base class of Entree
+  class Entree {
+  protected:
+    std::string _name;
+  public:
+    Entree() {};
+    string getName() {return _name;};
+  };
+
+  
+  class Hamburger : public Entree {
+  public:
+    Hamburger() : Entree() {_name = "Hamburger";};
+  };
+  
+  
+  class Hotdog : public Entree {
+  public:
+    Hotdog() : Entree() {_name = "Hotdog";};
+  };
+  
+  
+  // base class of Side
+  class Side {
+  protected:
+    std::string _name;
+  public:
+    Side() {};
+    string getName() {return _name;};
+  };
+
+  
+  class Fries : public Side{
+  public:
+    Fries() : Side() {_name = "Fries";};
+  };
+  
+  
+  class Salad : public Side {
+  public:
+    Salad() : Side() {_name = "Salad";};
+  };
+
+  
+  class Drink {
+  private:
+    string _name;
+  public:
+    Drink() {_name = "Soda";};
+    string getName() {return _name;};
+  };
+
+
+  // base class of builder
+  class Meal {
+  protected:
+     string _name;
+     Entree* _entree;
+     Side* _side;
+     Drink* _drink;
+  public:
+    Meal(string name):_name(name) {};
+    void setEntree(Entree* e) {_entree = e;};
+    void setSide(Side* s) {_side = s;};
+    void setDrink(Drink* d) {_drink = d;};
+    void showItems() {
+      printf("\nMeal %s: %s, %s, and %s\n", _name.c_str(), 
+                            _entree->getName().c_str(),
+                            _side->getName().c_str(),
+                            _drink->getName().c_str());
+    };
+  }; 
+  
+  
+  class MealBuilder {
+  protected:
+     Meal* _Meal;
+  public:
+    virtual void cookEntree() = 0;
+    virtual void cookSide() = 0;
+    virtual void fillDrink() = 0;
+    virtual Meal* getMeal() = 0;
+  }; 
+  
+  
+  class HamburgerMealBuilder : public MealBuilder {
+  public:
+    HamburgerMealBuilder() : MealBuilder() {
+      _Meal = new Meal("Hamburger Meal");
+    };
+    void cookEntree() { 
+      Hamburger* h = new Hamburger();
+      printf("Cooking %s...\n", h->getName().c_str());
+      _Meal->setEntree( h );
+    };
+    void cookSide() { 
+      Fries* f = new Fries();
+      printf("Cooking %s...\n", f->getName().c_str());
+      _Meal->setSide( f );
+    };
+    void fillDrink() { 
+      Drink* d = new Drink();
+      printf("Filling %s...\n", d->getName().c_str());
+      _Meal->setDrink( d );
+    };
+    Meal* getMeal() {return _Meal;};
+  }; 
+  
+  
+  class HotdogMealBuilder : public MealBuilder {
+  public:
+    HotdogMealBuilder() : MealBuilder() {
+      _Meal = new Meal("Hotdog Meal");
+    };
+    void cookEntree() { 
+      Hotdog* h = new Hotdog();
+      printf("Cooking %s...\n", h->getName().c_str());
+      _Meal->setEntree( h );
+    };
+    void cookSide() { 
+      Salad* s = new Salad();
+      printf("Preparing %s...\n", s->getName().c_str());
+      _Meal->setSide( s );
+    };
+    void fillDrink() { 
+      Drink* d = new Drink();
+      printf("Filling %s...\n", d->getName().c_str());
+      _Meal->setDrink( d );
+    };
+    Meal* getMeal() {return _Meal;};
+  }; 
 }
 
 

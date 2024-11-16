@@ -573,7 +573,7 @@ int testPatternMatching(const std::string& compStr ) {
   return 1;
 }
 
-int testCreationalDP() {
+void testFactoryMethod() {
   CREATIONAL_DP::CoffeeMakerFactory coffeeMaker;
   CREATIONAL_DP::Coffee* coffeePtr = coffeeMaker.getCoffee();
   if (coffeePtr==nullptr) {
@@ -581,7 +581,80 @@ int testCreationalDP() {
   } else {
     printf("The drink is %s.\n",coffeePtr->getType());
   }
+}
+
+void testAbstractFactory() {
+  CREATIONAL_DP::CarMakerFactory* carMaker;
+
+  int choice;
+  cout << "Select type of car factory: " << endl;
+  cout << "1: Gas factory" << endl;                                
+  cout << "2: Electric factory" << endl;                               
+  cin >> choice;                                                
+                                                                  
+  switch (choice) {                                             
+  case(1):                                                      
+    carMaker = new CREATIONAL_DP::GasCarMakerFactory();                          
+    break;                                          
+  case(2):                                          
+    carMaker = new CREATIONAL_DP::ElectricCarMakerFactory();                          
+    break;
+  default:
+    carMaker = nullptr;  
+    break;
+  }
+
+  if (carMaker!=nullptr) {
+    CREATIONAL_DP::Door* aDoor = carMaker->buildDoor();
+    aDoor->open();
     
+    CREATIONAL_DP::Powertrain* aPowertrain = 
+      carMaker->buildPowertrain();
+    aPowertrain->start();
+  }
+}
+  
+void testBuilder() {
+  CREATIONAL_DP::MealBuilder* cooker;
+  CREATIONAL_DP::Meal* meal;
+  
+  int choice;
+  cout << "Select a meal: " << endl;
+  cout << "1: Hamburger Meal" << endl;                                
+  cout << "2: Hotdog Meal" << endl;                               
+  cin >> choice;                                                
+                                                                  
+  switch (choice) {                                             
+  case(1):                                                      
+    cooker = new CREATIONAL_DP::HamburgerMealBuilder();                          
+    break;                                          
+  case(2):                                          
+    cooker = new CREATIONAL_DP::HotdogMealBuilder();                          
+    break;
+  default:
+    cooker = nullptr;  
+    break;
+  }
+  // building a complex Meal object
+  cooker->cookEntree();
+  cooker->cookSide();
+  cooker->fillDrink();
+  meal = cooker->getMeal();
+ 
+  // show what are inside the meal
+  meal->showItems();
+}
+
+int testCreationalDP() {
+  // builder method
+  testBuilder();
+
+  // abstract factory method
+  //testAbstractFactory();
+  
+  // factory method
+  //testFactoryMethod();
+  
   return 0;
 }
 

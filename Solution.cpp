@@ -13,6 +13,46 @@ using namespace STREE;
 using namespace SHUFFLE;
 using DSA::ArrayLikeDsAlg;
 
+char* CREATIONAL_DP::Coffee::getType() {
+  return (this->_type);
+};
+
+// ctor of class Espresso
+CREATIONAL_DP::Espresso::Espresso() : Coffee() {
+  strcpy(_type, "Espresso");
+  cout << "\nMaking a cup of " << _type;
+  cout << "\nGrind and brew one scoop of espresso beans\n"; 
+};
+
+// ctor of class Cappuccino
+CREATIONAL_DP::Cappuccino::Cappuccino() : Coffee() {
+  strcpy(_type, "Cappuccino");
+  cout << "\nMaking a cup of " << _type;
+  cout << "\nGrind and brew one scoop of espresso beans";
+  cout << "\nHeat and foam milk\n";
+};
+
+CREATIONAL_DP::Coffee* CREATIONAL_DP::CoffeeMakerFactory::getCoffee() {
+  int choice;
+
+  cout << "Select type of coffee to make: " << endl;
+  cout << "1: Espresso" << endl;
+  cout << "2: Cappucino" << endl;
+  cin >> choice;
+
+  switch (choice) {
+  case(1):
+    return (new Espresso);
+    break;
+  case(2):
+    return (new Cappuccino);
+    break;
+  default:
+    return nullptr;
+    break;
+  }
+};
+
 void LEETCODE::merge(vector<int>& nums1, int m,                         
                      vector<int>& nums2, int n) {
   vector<int> temp1 {nums1.begin(), nums1.begin()+m};
