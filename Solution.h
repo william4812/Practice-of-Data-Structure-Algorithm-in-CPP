@@ -22,6 +22,13 @@ using namespace std;
 #ifndef HEADER_H_SOLUTION
 #define HEADER_H_SOLUTION
 
+#define DEBUG
+
+#ifdef DEBUG
+#define DEBUG_MSG(x) do { std::cout << x;} while( false )
+#else
+#define DEBUG_MSG(x) do { } while( false )
+#endif
 
 /* creational design pattern */
 namespace CREATIONAL_DP {
@@ -301,7 +308,88 @@ namespace CREATIONAL_DP {
       _Meal->setDrink( d );
     };
     Meal* getMeal() {return _Meal;};
-  }; 
+  };
+
+
+  // base class of Animal
+  class Animal {
+  protected:
+    std::string _color;
+    int _hairLength;
+    int _tail;
+    int _weight;
+    int _height;
+    int _age;
+
+    int _intelligence;
+    int _stubbornness;
+    int _agressiveness;
+
+  public:
+    virtual Animal* clone() = 0;
+    void setHariLength(const int& hl) {_hairLength = hl;};
+    void setHariColor(const std::string& c) {_color = c;};
+    void setTail(const int& t) {_tail = t;};       
+    void setWeight(const int& w) {_weight = w;};                                      
+    void setHeight(const int& h) {_height = h;};                                       
+    void setAge(const int& a) {_age = a;};
+    void printProperty() {
+      DEBUG_MSG("_color: " << _color << std::endl);
+      DEBUG_MSG("_hairLength: " << _hairLength << std::endl);
+      DEBUG_MSG("_tail: " <<_tail << std::endl);
+      DEBUG_MSG("_weight: " << _weight << std::endl);
+      DEBUG_MSG("_height: " << _height << std::endl);
+      DEBUG_MSG("_age: " << _age << std::endl);
+      DEBUG_MSG("_intelligence: " << _intelligence << std::endl);
+      DEBUG_MSG("_stubbornness: " << _stubbornness << std::endl);
+      DEBUG_MSG("_agressiveness: " << _agressiveness << std::endl);
+    };
+  };
+
+
+  class Sheep : public Animal {
+  public:
+    // ctor
+    Sheep() {
+      _hairLength = 5;
+      _intelligence = 3;
+      _stubbornness = 2;
+      _agressiveness = 7;
+    };
+
+    Sheep* clone() { return new Sheep(*this); };
+    void shearing(const int& d=2) { _hairLength -= d; };
+  };
+  
+  
+  class Cow : public Animal {
+  public:
+    // ctor
+    Cow() {
+      _hairLength = 9;
+      _intelligence = 6;
+      _stubbornness = 5;
+      _agressiveness = 8;
+    };
+
+    Cow* clone() { return new Cow(*this); };
+  };
+
+
+  class Leader {
+  private:
+    static Leader* _instance;
+    Leader() {cout << "A new leader is elected...\n";};
+  public:
+    static Leader* getInstance() {
+      if (_instance == nullptr) {
+        _instance = new Leader();
+      }
+      return _instance;
+    };
+    void giveSpeech() { cout << "Address the public\n";};
+  };
+ 
 }
 
 
@@ -1352,8 +1440,8 @@ namespace DSA {
                    _rightChild(nullptr),
                    _enumColor(Color::Black) {
  
-    cout << "RAII, allocation of RBNode of " 
-         << "nullptr\n";
+    //cout << "RAII, allocation of RBNode of " 
+    //     << "nullptr\n";
   }
     
   template <typename T>

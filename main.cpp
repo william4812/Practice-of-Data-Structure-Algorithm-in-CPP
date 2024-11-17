@@ -643,11 +643,68 @@ void testBuilder() {
  
   // show what are inside the meal
   meal->showItems();
+  cout << "meal: " << meal << endl;
+
+  CREATIONAL_DP::Meal meal2(*meal);
+  meal2.showItems();
+  cout << "&meal2: " << &meal2 << endl;
 }
 
+void testPrototype() {
+  //
+  CREATIONAL_DP::Sheep* sheep0 = new CREATIONAL_DP::Sheep;
+  sheep0->setHariColor("white");
+  sheep0->setTail(5);
+  sheep0->setWeight(90);
+  sheep0->setHeight(1);
+  sheep0->setAge(5);
+  cout << "Sheep 0...\n"; 
+  sheep0->printProperty();
+  
+  CREATIONAL_DP::Cow* cow0 = new CREATIONAL_DP::Cow();
+  cow0->setHariColor("brown");
+  cow0->setTail(20);
+  cow0->setWeight(790);
+  cow0->setHeight(2);
+  cow0->setAge(8);
+  cout << "Cow 0...\n"; 
+  cow0->printProperty();
+  
+  CREATIONAL_DP::Animal* farm[3];
+  //
+  farm[0] = sheep0->clone();
+  cout << "Sheep 0 clone...\n"; 
+  farm[0]->printProperty();
+  
+  farm[1] = cow0->clone();
+  farm[1]->setWeight(1000);
+  cout << "Cow 0 clone...\n"; 
+  farm[1]->printProperty();
+  
+  sheep0->shearing();
+  farm[2] = sheep0->clone();
+  cout << "Shared Sheep 0 clone...\n"; 
+  farm[2]->printProperty();
+
+}
+
+// Definition of the static member outside the class
+CREATIONAL_DP::Leader* CREATIONAL_DP::Leader::_instance = nullptr;
+
+void testSingleton() {
+  //CREATIONAL_DP::Leader::getInstance()->giveSpeech();
+  CREATIONAL_DP::Leader::getInstance();
+};
+
 int testCreationalDP() {
+  // singleton method
+  testSingleton();
+  
+  // prototype method
+  //testPrototype();
+  
   // builder method
-  testBuilder();
+  //testBuilder();
 
   // abstract factory method
   //testAbstractFactory();
