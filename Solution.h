@@ -30,6 +30,81 @@ using namespace std;
 #define DEBUG_MSG(x) do { } while( false )
 #endif
 
+
+
+/* structural design pattern */
+namespace STRUCTURAL_DP {
+  
+  
+  /* Adapter method has two ways of implementation 
+   * 1. object adapter using composition 
+   * 2. class adapter using inheritance */
+  // base class
+  class Component {
+  protected:
+  public:
+   virtual void run() = 0; 
+  };
+
+  
+  class ConcreteComponentA : public Component {
+  protected:
+  public:
+   void run() override {
+     cout << "Executing ConcreteComponentA::run()\n";
+   }; 
+  };
+  
+  
+  class ConcreteComponentB : public Component {
+  protected:
+  public:
+   void run() override {
+     cout << "Executing ConcreteComponentB::run()\n";
+   }; 
+  };
+
+
+  // legacy class
+  class LegacyComponent {
+  private:
+  protected:
+  public:
+    void go() { cout << "Executing LegacyComponent::go()\n";};
+  };
+
+
+  // object adapter
+  class LegacyAdapter : public Component {
+  private:
+    unique_ptr<LegacyComponent> _legacyComponent;
+  protected:
+  public:
+    LegacyAdapter() : _legacyComponent(make_unique<LegacyComponent>()) {};
+    void run() override {
+      cout << "LegacyAdapter::run() -> calling LegacyComponent::go()\n";
+      _legacyComponent->go();
+    };
+  }; 
+  
+  
+  // class adapter
+  class LegacyClassAdapter : public Component, private LegacyComponent {
+  private:
+  protected:
+  public:
+    LegacyClassAdapter() {};
+    void run() override {
+      cout << "LegacyClassAdapter::run() -> "
+           << "calling LegacyComponent::go()\n";
+      go();
+    };
+  }; 
+
+}
+
+
+
 /* creational design pattern */
 namespace CREATIONAL_DP {
 

@@ -698,7 +698,7 @@ void testSingleton() {
 
 int testCreationalDP() {
   // singleton method
-  testSingleton();
+  //testSingleton();
   
   // prototype method
   //testPrototype();
@@ -714,10 +714,37 @@ int testCreationalDP() {
   
   return 0;
 }
+  
+void testAdapterMethod() {
+  typedef STRUCTURAL_DP::Component Component;
+  typedef STRUCTURAL_DP::ConcreteComponentA ConcreteComponentA;
+  typedef STRUCTURAL_DP::ConcreteComponentB ConcreteComponentB;
+  typedef STRUCTURAL_DP::LegacyAdapter LegacyAdapter;
+  typedef STRUCTURAL_DP::LegacyClassAdapter LegacyClassAdapter;
+
+  const unique_ptr<Component> components[] {
+    make_unique<ConcreteComponentA>()
+  , make_unique<ConcreteComponentB>()
+  , make_unique<LegacyAdapter>()
+  , make_unique<LegacyClassAdapter>()
+  };
+
+  for (const auto& it : components) {
+    it->run();
+  }
+};
+
+int testStructuralDP() {
+  // adapter method
+  testAdapterMethod();
+  return 0;
+};
 
 int main() {
   
-  assert(testCreationalDP()==0);
+  assert(testStructuralDP()==0);
+  
+  //assert(testCreationalDP()==0);
   
   //assert(testPatternMatching("williams19834812@gmail.com")==0);
 
