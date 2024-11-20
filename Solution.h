@@ -10,6 +10,7 @@
 #include <queue> /* priority_queue */
 #include <random> /* random_device */
 #include <regex>
+#include <stdio.h>
 #include <stdlib.h> /* atoi */
 #include <string>
 #include <typeinfo>
@@ -34,8 +35,410 @@ using namespace std;
 
 /* structural design pattern */
 namespace STRUCTURAL_DP {
+  /* Flyweight method implements
+   * Flywheel objects, set by Factory, with common data or
+   * intrinsic shared state while holding 
+   * object-specific data, set by Client, in each flywheel object */
+  class Texture {
+  private:
+    const string _fileName;
+    int _id;
+  public:
+    explicit Texture(const string& fileName) : 
+      _fileName(fileName), _id() {
+        std::random_device rd; // random number generator object
+        std::mt19937 gen(rd()); // Mersenne Twister pseudo-random number engine
+        std::uniform_int_distribution<> distrib(0, INT_MAX);
+        _id = distrib(gen);
+      };
+    const string description() const {
+      return ("<" + _fileName + " id " + to_string(_id) + ">");
+    }
+  };
+
+
+  class Sprite {
+  private:
+    //object-specific extrinsic properties
+    int _width;
+    int _height;
+    int _x;
+    int _y; 
+    
+    /* common instrinsic properties*/
+    const Texture* _texture;
+  public:
+    /*
+    Sprite(const int& width, const int& height, 
+           const int& x, const int& y, 
+           const string& textureFileName) :
+      _width(width), _height(height), _x(x), _y(y),
+      _texture(new Texture(textureFileName)) {};
+    */
+    Sprite(const Texture* texture) : 
+      _texture(texture) {
+      cout << "Creating sprite with texture file: "
+           << _texture->description() << endl;
+    };
+    void setPositionSize(const int& width, const int& height,
+                         const int& x, const int& y) {
+      _x = x;
+      _y = y;
+      _width = width;
+      _height = height;
+    };
+    void render() const {
+      cout << "Rendering sprite with texture: "
+           << _texture->description() << endl;
+    };
+  };
+
+  // class for client to retrive Sprite
+  class SpriteFactory {
+  private:
+    unordered_map<string, Sprite*> _spritePool;
+    unordered_map<string, Texture*> _texturePool;
+    
+    const Texture* getTexture(const string& fileName) {
+      auto it = _texturePool.find(fileName);
+      if (it != _texturePool.end()) {
+        return it->second;
+      } else {
+       auto [newIt, _] = _texturePool.emplace(fileName, 
+           new Texture(fileName));
+       return newIt->second;
+      } 
+    };
+  public:
+    ~SpriteFactory() {
+      for (auto& [filename, sprite] : _spritePool) {
+        delete sprite;
+      }
+      for (auto& [filename, texture] : _texturePool) {
+        delete texture;
+      }
+    };
+    Sprite* makeSprite(const string& fileName) {
+      auto it = _spritePool.find(fileName);
+      if (it != _spritePool.end()) {
+        return it->second;
+      } else {
+        const auto texture = getTexture(fileName);
+        auto [newIt,_] = _spritePool.emplace(fileName, 
+            new Sprite(texture));
+        return newIt->second;
+      }    
+    }; 
+  };
+
+
+  /* Facade method implements
+   * 1.) a Facade class as interface
+   * 2.) underlying subsystem classes */
+  class Database {
+  public:
+    void storeReservation(const string& reservation) {
+      cout << "Database: Storing reservation " 
+           << reservation << endl;
+    }
+  };
   
   
+  class PaymentGateway {
+  public:
+    void processPayment(const string& paymentInfo) {
+      cout << "Payment Gateway: Processing payment with info: " 
+           << paymentInfo << endl;
+    }
+  };
+  
+  
+  class MessagingService {
+  public:
+    void sendConfirmation(const string& message) {
+      cout << "Messaging Service: Sending confirmation message: " 
+           << message << endl;
+    }
+  };
+
+
+  class ReservationSystemFacade {
+  private:
+    Database _database;
+    PaymentGateway _paymentGateway;
+    MessagingService _messagingService;
+  protected:
+  public:
+    ReservationSystemFacade() : 
+      _database(), _paymentGateway(), _messagingService() {};
+    void makeReservation(const string& reservationInfo,
+                        const string& paymentInfo,
+                        const string& message="Reservation confirmed") {
+      cout << "Running facade interface...\n";
+      _database.storeReservation(reservationInfo);
+      _paymentGateway.processPayment(paymentInfo);
+      _messagingService.sendConfirmation(message);
+    };
+
+  };
+  
+  /* Decorator method extend
+   * the functionality of an object
+   * with no change to the original object */
+  class Computer {
+  public:
+    virtual ~Computer() = default;
+    virtual string description() const = 0;
+    virtual double price() const = 0;
+  };
+
+
+  class Desktop : public Computer {
+  public:
+    string description() const override {
+      return "Desktop";
+    }
+    double price() const override {
+      return 1000.0;
+    }
+  };
+  
+
+  class Laptop : public Computer {
+  public:
+    string description() const override {
+      return "Laptop";
+    }
+    double price() const override {
+      return 1500.0;
+    }
+  };
+
+
+  class ComputerDecorator : public Computer {
+  protected:
+    const Computer* _computer;
+  public:
+    explicit ComputerDecorator(const Computer* computer) : 
+      _computer(computer) {};
+
+    string description() const override {
+      return _computer->description();
+    };
+
+    double price() const override {
+      return _computer->price();
+    };
+  };
+  
+  
+  class MemoryUpgradeDecorator : public ComputerDecorator {
+  public:
+    explicit MemoryUpgradeDecorator(const Computer* computer) : 
+      ComputerDecorator(computer) {};
+
+    string description() const override {
+      return ComputerDecorator::description() + "with memory upgrade";
+    };
+
+    double price() const override {
+      return ComputerDecorator::price() + 500.0;
+    };
+  };
+  
+  
+  class GraphicsUpgradeDecorator : public ComputerDecorator {
+  public:
+    explicit GraphicsUpgradeDecorator(const Computer* computer) : 
+      ComputerDecorator(computer) {};
+
+    string description() const override {
+      return ComputerDecorator::description() + "with graphics upgrade";
+    };
+
+    double price() const override {
+      return ComputerDecorator::price() + 500.0;
+    };
+  };
+
+  /* Composite method includes
+   * 1.) Composite objects, e.g., class Box
+   * 2.) Leaf objects, e.g., class Book and class Toy
+   * using common or unified interface to simplify operations*/
+   // unified interface
+   class Product {
+   public:
+     virtual ~Product() = default; // dtor
+     virtual double price() const = 0;
+   };
+
+
+   // class for leaf objects 
+   class Book : public Product {
+   private:
+     std::string _title;
+     double _price;
+   public:
+     Book(const std::string& title, const double& price) : 
+       _title(title), _price(price) {}; // ctor
+     double price() const override {
+       cout << "Getting \"" << _title << "\" book price" << endl;
+       return _price;
+     }
+   };
+   
+   
+   // class for leaf objects 
+   class Toy : public Product {
+   private:
+     std::string _name;
+     double _priceTag;
+   public:
+     Toy(const std::string& name, const double& priceTag) : 
+       _name(name), _priceTag(priceTag) {}; // ctor
+     double price() const override {
+       cout << "Getting \"" << _name << "\" toy price" << endl;
+       return _priceTag;
+     }
+   };
+   
+   // class for composite objects 
+   class Box : public Product {
+   private:
+     std::string _name;
+     //std::vector<Book*> _books;
+     //std::vector<Toy*> _toys;
+     //std::vector<Box*> _boxes;
+     std::vector<Product*> _products;
+   
+   public:
+     explicit Box(const std::string& name) : _name(name) {};
+     void addProduct(Product& product) { 
+       _products.push_back( &product );
+     };
+     //void addBook(Book& book) { _books.push_back(&book); };
+     //void addToy(Toy& toy) { _toys.push_back(&toy); };
+     //void addBox(Box& box) { _boxes.push_back(&box); };
+     double price() const override {
+       cout << "Opening " << _name << endl;
+       double totalPrice = 0;
+
+       for (const auto& product : _products) {
+         totalPrice+=(product->price());
+       }
+/*
+       for (const auto& book : _books) {
+         totalPrice+=(book->price());
+       }
+       
+       for (const auto& toy : _toys) {
+         totalPrice+=(toy->price());
+       }
+       
+       for (const auto& box : _boxes) {
+         totalPrice+=(box->price());
+       }
+*/
+       return totalPrice;
+     }
+   };
+
+
+  /* Bridge method separates
+   * 1.) common features and
+   * 2.) specific features 
+   * in hierarchies */
+  // Specific feature
+  // Abstract class for message Preparation and Handling
+  class ITextHandler {
+  private:
+  protected:
+  public:
+    virtual ~ITextHandler() = default;
+    virtual std::string prepareMessage(const std::string& text) const = 0;
+  };
+  
+  
+  // Common feature
+  // Abstract class for message Preparation and Handling
+  class ITextSharer {
+  private:
+    const ITextHandler& _textHandler;
+  protected:
+    virtual bool sharePreparedText(const string& text) = 0;
+  public:
+    explicit ITextSharer(const ITextHandler& handler) :
+      _textHandler(handler) {};
+    virtual ~ITextSharer() = default;
+    bool shareText(const std::string& text) {
+      const std::string preparedText 
+        = _textHandler.prepareMessage(text);
+      return sharePreparedText(preparedText);
+    };
+  };
+  
+  
+  // derived classes of ITextHandler
+  class PlainTextHandler : public ITextHandler {
+  private:
+  protected:
+  public:
+    std::string prepareMessage(const std::string& text) const override {
+      cout << "PlainTextHandler::prepareMessage() returning original text...\n"
+           << endl;
+      return text;
+    };
+  };
+  
+  
+  class EncryptedTextHandler : public ITextHandler {
+  private:
+    std::string xorEncrypted(const std::string& input) const {
+      char key = 64;
+      std::string output = input;
+
+      for (long unsigned int i = 0; i<input.size(); ++i) {
+        output[i] = input[i] ^ key;
+      }
+      return output;
+    };
+  protected:
+  public:
+    std::string prepareMessage(const std::string& text) const override {
+      cout << "EncryptedTextHandler::prepareMessage() encrypting text...\n"
+           << endl;
+      return xorEncrypted(text);
+    };
+  };
+  
+  class EmailShare : public ITextSharer {
+  private:
+  protected:
+  public:
+    explicit EmailShare(const PlainTextHandler& handler) : 
+      ITextSharer(handler) {};
+    bool sharePreparedText(const string& text) override {
+      cout << "EmailShare::shareText() sharing text..." << text
+           << endl;
+      return true;
+    };
+  };
+  
+  
+  class EmailShareEncrypted : public ITextSharer {
+  private:
+  protected:
+  public:
+    explicit EmailShareEncrypted(const EncryptedTextHandler& handler) : 
+      ITextSharer(handler) {};
+    bool sharePreparedText(const string& text) override {
+      cout << "EmailShareEncrypted::shareText() sharing text..." << text
+           << endl;
+      return true;
+    };
+  };
+
+
   /* Adapter method has two ways of implementation 
    * 1. object adapter using composition 
    * 2. class adapter using inheritance */

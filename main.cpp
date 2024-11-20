@@ -692,13 +692,16 @@ void testPrototype() {
 CREATIONAL_DP::Leader* CREATIONAL_DP::Leader::_instance = nullptr;
 
 void testSingleton() {
+  CREATIONAL_DP::Leader* leader = CREATIONAL_DP::Leader::getInstance();
+  leader->giveSpeech();
+
   //CREATIONAL_DP::Leader::getInstance()->giveSpeech();
-  CREATIONAL_DP::Leader::getInstance();
+  //CREATIONAL_DP::Leader::getInstance();
 };
 
 int testCreationalDP() {
   // singleton method
-  //testSingleton();
+  testSingleton();
   
   // prototype method
   //testPrototype();
@@ -733,10 +736,150 @@ void testAdapterMethod() {
     it->run();
   }
 };
+  
+void testBridgeMethod() {
+  typedef STRUCTURAL_DP::PlainTextHandler PlainTextHandler;
+  PlainTextHandler plainThr = PlainTextHandler();
+  typedef STRUCTURAL_DP::EncryptedTextHandler EncryptedTextHandler;
+  EncryptedTextHandler encryptedThr = EncryptedTextHandler();
+
+
+  // create array of ptr to CloudStorage objects
+  typedef STRUCTURAL_DP::ITextSharer ITextSharer;
+  typedef STRUCTURAL_DP::EmailShare EmailShare;
+  typedef STRUCTURAL_DP::EmailShareEncrypted EmailShareEncrypted;
+  const std::unique_ptr<ITextSharer> sharingServices[] {
+    make_unique<EmailShare>(plainThr),
+    make_unique<EmailShareEncrypted>(encryptedThr),
+  };
+
+  // iterate thourgh the array and invoke uploadContents and 
+  // getFreeSpace methods on each object
+  const std::string content = "Beam me up, Scotty!";
+  for (const auto& service : sharingServices) {
+    service->shareText(content);
+    cout << endl;
+  }
+};
+
+  
+void testCompositeMethod() {
+  // create some products
+  STRUCTURAL_DP::Book book1{"Robinson Crusoe", 4.99};
+  STRUCTURAL_DP::Toy toy1{"Star Trooper", 39.99};
+  STRUCTURAL_DP::Toy toy2{"Barbie Dreamhouse", 59.99};
+
+  // create some boxes
+  STRUCTURAL_DP::Box smallBox{"Small Box"};
+
+  smallBox.addProduct(book1);
+  smallBox.addProduct(toy1); 
+  STRUCTURAL_DP::Box bigBox{"Big Box"};
+
+  bigBox.addProduct(toy2);
+  bigBox.addProduct(smallBox);
+
+  cout << "Calculating total price. " << endl
+       << bigBox.price() << endl;
+};
+  
+void testDecoratorMethod() {
+  auto desktop = new STRUCTURAL_DP::Desktop();
+  cout << desktop->description() << " costs $ " << desktop->price() << endl;
+  
+  auto laptop = new STRUCTURAL_DP::Laptop();
+  cout << laptop->description() << " costs $ " << laptop->price() << endl;
+  
+  auto desktopMemoryUpgrade = 
+    new STRUCTURAL_DP::MemoryUpgradeDecorator(desktop);
+  cout << desktopMemoryUpgrade->description() << " costs $ " 
+       << desktopMemoryUpgrade->price() << endl;
+
+  auto laptopGraphicsUpgrade = 
+    new STRUCTURAL_DP::GraphicsUpgradeDecorator(laptop);
+  cout << laptopGraphicsUpgrade->description() << " costs $ " 
+       << laptopGraphicsUpgrade->price() << endl;
+
+  delete desktop;
+  delete laptop;
+  delete desktopMemoryUpgrade;
+  delete laptopGraphicsUpgrade;
+};
+  
+void testFacadeMethod() {
+  STRUCTURAL_DP::ReservationSystemFacade reservationSystemFacade;
+  reservationSystemFacade.makeReservation(
+      "Room reservation info",
+      "Payment info"
+      );
+  /*
+  // Not using Facade method
+  STRUCTURAL_DP::Database db; 
+  STRUCTURAL_DP::PaymentGateway paymentGateway; 
+  STRUCTURAL_DP::MessagingService messagingService;
+
+  db.storeReservation("Room reservation info");
+  paymentGateway.processPayment("Payment info");
+  messagingService.sendConfirmation("Reservation confirmed.");
+  */
+};
+  
+void testFlyweightMethod() {
+  typedef STRUCTURAL_DP::Sprite Sprite;
+  typedef STRUCTURAL_DP::SpriteFactory SpriteFactory;
+  
+  vector<Sprite*> sprites;
+  const int numSprite = 10;
+  const string textureFile = "spaceship.png";
+
+  SpriteFactory factory;
+
+  for (int i = 0; i < numSprite; ++i) {
+    // Non flyweight method
+    //sprites.push_back(new Sprite(10, 10, i*10, i*10, textureFile) );
+  
+    auto sprite = factory.makeSprite(textureFile);
+    sprite->setPositionSize(10, 10, i*10, i*10);
+    sprites.push_back(sprite);
+  }
+  
+  // render/draw all sprites
+  for (const auto& it : sprites) {
+    it->render();
+  }
+
+  // cleanup
+  //for (const auto& it : sprites) {
+  //  delete(it);
+  //}
+}; 
+
+void testProxyMethod() {
+
+};
 
 int testStructuralDP() {
+  // flyweight  method
+  testProxyMethod();
+  
+  // flyweight  method
+  //testFlyweightMethod();
+  
+  // facade  method
+  //testFacadeMethod();
+  
+  // decorator  method
+  //testDecoratorMethod();
+  
+  // composite method
+  //testCompositeMethod();
+  
+  // bridge method
+  //testBridgeMethod();
+  
   // adapter method
-  testAdapterMethod();
+  //testAdapterMethod();
+  
   return 0;
 };
 
