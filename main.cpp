@@ -855,6 +855,32 @@ void testFlyweightMethod() {
 }; 
 
 void testProxyMethod() {
+  
+  // non-Proxy 
+  //STRUCTURAL_DP::RealConfigFile configFile("./config.txt");
+  
+  STRUCTURAL_DP::ConfigFileProxy configFile("./config.txt");
+  
+  bool useSettings = true;
+
+  if (useSettings) {
+    vector<string> settings = configFile.getSettings();
+    string data{};
+
+    for (const auto& setting : settings) {
+      //cout << setting << endl;
+      data+=(setting+"\n");
+    }
+  
+    //STRUCTURAL_DP::SecureStorage secureStorage
+    //  = STRUCTURAL_DP::SecureStorage(data);
+    STRUCTURAL_DP::SecureStorageProxy secureStorage
+      = STRUCTURAL_DP::SecureStorageProxy(data);
+    cout << secureStorage.getContents() << endl;
+
+  } else {
+    cout << "Configuration not used." << endl;
+  }
 
 };
 
@@ -883,9 +909,85 @@ int testStructuralDP() {
   return 0;
 };
 
+void testChainOfResponsibilityMethod() {
+  typedef BEHAVIORIAL_DP::BaseValidator BaseValidator;
+  typedef BEHAVIORIAL_DP::NotEmptyValidator NotEmptyValidator;
+  typedef BEHAVIORIAL_DP::RegexValidator RegexValidator;
+  typedef BEHAVIORIAL_DP::LengthValidator LengthValidator;
+  typedef BEHAVIORIAL_DP::HistoryValidator HistoryValidator;
+
+  std::vector<std::string> oldPasswords = { 
+    "abc123", "123456", "hello", "hello@test.com" 
+  };    
+
+  BaseValidator* emailValidator = new BaseValidator;                          
+
+  emailValidator->setNext(new NotEmptyValidator)
+                ->setNext(new RegexValidator("email address", "^\\w+([-+.']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$"))
+                ->setNext(new LengthValidator(10))
+                ->setNext(new HistoryValidator(oldPasswords)); 
+  
+  std::cout << "Checking Emails ---------------\n";                       
+  std::cout << "Input: \n" << emailValidator->validate("") << "\n\n";     
+  std::cout << "Input: hello\n" << emailValidator->validate("hello") << "\n\n";
+  std::cout << "Input: hello@test.com\n" << emailValidator->validate("hello@test.com") << "\n\n";
+  std::cout << "Input: shaun\n" << emailValidator->validate("shaun") << "\n\n";
+  std::cout << "Input: shaun@test.com\n" << emailValidator->validate("shaun@test.com") << "\n\n";
+
+  delete emailValidator;
+};
+
+std::string vectorToString(std::vector<std::string> v) {
+  std::string result = "";
+  for (const auto& i : v) {
+    result.append(i + ", ");
+  }
+  return result;
+};
+
+void testCommandMethod() {
+  typedef BEHAVIORIAL_DP::Canvas Canvas;
+  typedef BEHAVIORIAL_DP::Button Button;
+  typedef BEHAVIORIAL_DP::AddShapeCommand AddShapeCommand;
+  typedef BEHAVIORIAL_DP::ClearCommand ClearCommand;
+  Canvas* canvas = new Canvas;
+
+  Button* addTriangleButton = new Button( new 
+      AddShapeCommand("triangle", canvas));
+  Button* addSquareButton = new Button( new 
+      AddShapeCommand("square", canvas));
+  Button* clearButton = new Button( new ClearCommand(canvas));
+
+  addTriangleButton->click();
+  std::cout << "Current canvas state: " <<
+    vectorToString(canvas->getShapes()) << "\n";
+  addSquareButton->click();
+  addSquareButton->click();
+  addTriangleButton->click();
+  std::cout << "Current canvas state: " <<
+    vectorToString(canvas->getShapes()) << "\n";
+  clearButton->click();
+  std::cout << "Current canvas state: " <<
+    vectorToString(canvas->getShapes()) << "\n";
+  delete canvas;
+};
+
+int testBehavioralDP() {
+  
+  // Command method
+  testCommandMethod();
+  
+  // Chain of responsibility method
+  //testChainOfResponsibilityMethod();
+  
+  return 0;
+};
+
 int main() {
   
-  assert(testStructuralDP()==0);
+  assert(testBehavioralDP()==0);
+  
+  //assert(testStructuralDP()==0);
   
   //assert(testCreationalDP()==0);
   

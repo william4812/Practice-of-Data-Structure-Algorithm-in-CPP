@@ -1,4 +1,4 @@
-#include <algorithm> /* max_element, count, copy */
+#include <algorithm> /* max_element, count, copy, std::find */
 #include <assert.h> /* assert */
 #include <cstdio> /* printf */
 #include <cstdlib>
@@ -33,8 +33,320 @@ using namespace std;
 
 
 
+/* behaviorial design pattern */
+namespace BEHAVIORIAL_DP {
+  /* command */
+  class Canvas {
+  private:
+    std::vector<std::string> _shapes;
+  public:
+    void addShape(const std::string& newShape) {
+      _shapes.push_back(newShape);
+    };
+    void clearAll() {
+      _shapes.clear(); // empty _shapes vector
+    };
+    std::vector<std::string> getShapes() {return _shapes; };
+  };
+
+
+  class Command {
+  public:
+    virtual ~Command() {};
+    virtual void execute() = 0;
+  };
+
+
+  // abstract class
+  class Button {
+  private:
+    Command* _command;
+  public:
+    Button(Command* command) : _command(command) {};
+    //virtual ~Button() {};
+    //virtual void click() = 0;
+    void click() {
+      _command->execute();
+    };
+  };
+  
+
+  class AddShapeCommand : public Command {
+  private:
+    std::string _shapeName;
+    Canvas* _canvas;
+  public:
+    AddShapeCommand(const std::string& shapeName, Canvas* canvas) :
+   _shapeName(shapeName), _canvas(canvas) {};
+    void execute() {
+      _canvas->addShape(_shapeName);
+    }
+  };
+  
+  
+  class ClearCommand : public Command {
+  private:
+    Canvas* _canvas;
+  public:
+    ClearCommand(Canvas* canvas) : _canvas(canvas) {};
+    void execute() {
+      _canvas->clearAll();
+    }
+  };
+ 
+  /* 
+  // concrete class
+  class AddTriangleButton : public Button {
+  private:
+    Canvas* _canvas;
+  public:
+    AddTriangleButton(Canvas* canvas) : _canvas(canvas) {};
+    void click() override {
+      _canvas->addShape("triangle");
+    };
+  };
+
+  
+  // concrete class
+  class AddSquareButton : public Button {
+  private:
+    Canvas* _canvas;
+  public:
+    AddSquareButton(Canvas* canvas) : _canvas(canvas) {};
+    void click() override {
+      _canvas->addShape("square");
+    };
+  };
+
+
+  // concrete class
+  class ClearButton : public Button {
+  private:
+    Canvas* _canvas;
+  public:
+    ClearButton(Canvas* canvas) : _canvas(canvas) {};
+    void click() override {
+      _canvas->clearAll();
+    };
+  };
+  */
+
+  /* Chain of responsibility */
+  class StringValidator {
+  public:
+    virtual ~StringValidator() {};
+    virtual StringValidator* 
+      setNext(StringValidator* nextValidator) = 0;
+    virtual std::string validate(std::string) = 0;
+  };
+
+
+  class BaseValidator : public StringValidator {
+  protected:
+    StringValidator* _next = nullptr;
+  public:
+    virtual ~BaseValidator() {delete _next;};
+    StringValidator* setNext(StringValidator* nextValidator) override {
+      _next = nextValidator;
+      return nextValidator;
+    };
+    virtual std::string validate(std::string testString) override {
+      if (this->_next) {
+        // pass responsibility to the next validate
+        return this->_next->validate(testString);
+      }
+      // reach the end of chain of responsibility
+      return "Success";
+    }
+  };
+
+
+  // Concrete handler
+  class NotEmptyValidator : public BaseValidator {
+  public:
+    NotEmptyValidator() {};
+    std::string validate(std::string testString) override {
+      puts("Checking if empty...");
+
+      if (testString.empty()) {
+        return "Please enter a value";
+      }
+      return BaseValidator::validate(testString);
+    };
+  };
+
+  
+  // Concrete handler
+  class LengthValidator : public BaseValidator {
+  private:
+    int _minLength;
+  public:
+    LengthValidator(int minLength) : _minLength(minLength) {};
+    std::string validate(std::string testString) override {
+      puts("Checking string length...");
+
+      if ((int)testString.length() < _minLength) {
+        return "Please enter a value longer " + 
+          std::to_string(_minLength);
+      }
+      return BaseValidator::validate(testString);
+    };
+  };
+  
+  
+  // Concrete handler
+  class RegexValidator : public BaseValidator {
+  private:
+    std::string _patternName;
+    std::string _regexString;
+  public:
+    RegexValidator(std::string patternName, std::string regexString) 
+      : _patternName(patternName), _regexString(regexString) {};
+    std::string validate(std::string testString) override {
+      puts("Checking regex match...");
+      if (!std::regex_match(testString, std::regex(_regexString))) {
+        return "The value entered does not match the proper format for a " 
+          + _patternName;
+      }
+      return BaseValidator::validate(testString);
+    };
+  };
+
+  //bool in_array(const std::string& value, 
+  //              const std::vector<std::string>& array) {
+  //  return std::find(array.begin(), array.end(), value) != array.end();
+  //};
+  
+  // Concrete handler
+  class HistoryValidator : public BaseValidator {
+  private:
+    std::vector<std::string> _historyItems;
+    
+    bool in_array(const std::string& value, 
+                  const std::vector<std::string>& array) {
+    return std::find(array.begin(), array.end(), value) != array.end();
+  };
+  public:
+    HistoryValidator(std::vector<std::string> historyItems) 
+      : _historyItems(historyItems) {};
+    std::string validate(std::string testString) override {
+      puts("Checking if string has been used before...");
+      if (in_array(testString, _historyItems)) {
+        return "Please enter a value here that you haven't entered before ";
+      }
+      return BaseValidator::validate(testString);
+    };
+  };
+  
+
+};
+
+
+
 /* structural design pattern */
 namespace STRUCTURAL_DP {
+  /* Proxy method */
+  
+
+  // Protective Proxy Type
+  class Storage {
+  public:
+    virtual const string getContents() = 0;
+    virtual ~Storage() = default;
+  };
+
+
+  class SecureStorage : public Storage {
+  private:
+    string _contents;
+  public:
+    explicit SecureStorage(const string& data) : _contents(data) {};
+    const string getContents() {
+      return _contents;
+    }
+  };
+
+  const string SECRET_CODE = "1234";
+  class SecureStorageProxy : public Storage {
+  private:
+    SecureStorage* _secureStorage;
+    bool validateCode() {
+      string input;
+      cout << "Enter secret code: " << endl;
+      cin >> input;
+      return (input == SECRET_CODE);
+    }
+  public:
+    SecureStorageProxy(const string& data) {
+      _secureStorage = new SecureStorage(data);
+       cout << "SecureStorageProxy created." << endl;
+    };
+    ~SecureStorageProxy() {
+      delete _secureStorage;
+    };
+
+    const string getContents() {
+      //string input;
+      //cout << "Enter secret code: " << endl;
+      //cin >> input;
+      if (validateCode()) {
+        cout << "Valid secret code...\n";
+        return _secureStorage->getContents();
+      } 
+      cout << "Invalid secret code...\n";
+      return "";
+    }
+  };
+
+  // Virtual Proxy Type
+  class ConfigFile {
+  public:
+    virtual vector<string> getSettings() = 0;
+    virtual ~ConfigFile() = default;
+  };
+
+
+  // Concrete implementation of the ConfigFile
+  class RealConfigFile : public ConfigFile {
+  private:
+    vector<string> _settings;
+  public:
+    explicit RealConfigFile(const string& filename) {
+      cout << "RealConfigFile created." << endl;
+      // Open file and read its contents into a vector of strings
+      ifstream file(filename);
+      string line;
+      while (getline(file, line)) {
+        _settings.push_back(line);
+      }
+      cout << _settings.size() << " settings loaded." << endl;
+    };
+
+    vector<string> getSettings() override {
+      return _settings;
+    }
+  };
+
+
+  class ConfigFileProxy : public ConfigFile {
+  private:
+    unique_ptr<RealConfigFile> _realConfigFile;
+    string _filename;
+  public:
+    ConfigFileProxy(const string& filename) : 
+      _realConfigFile(nullptr), _filename(filename) {
+        cout << "ConfigFileProxy created." << endl;
+      };
+    // delegates the loading until getSettings is called
+    vector<string> getSettings() override {
+      // check if the pointer exist
+      if (_realConfigFile == nullptr) {
+        _realConfigFile = make_unique<RealConfigFile>(_filename);
+      }
+      return _realConfigFile->getSettings();
+    }
+  };
+
   /* Flyweight method implements
    * Flywheel objects, set by Factory, with common data or
    * intrinsic shared state while holding 
