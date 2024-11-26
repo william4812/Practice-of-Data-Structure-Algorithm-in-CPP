@@ -35,7 +35,470 @@ using namespace std;
 
 /* behaviorial design pattern */
 namespace BEHAVIORIAL_DP {
-  /* command */
+
+
+  /* Strategy method */
+  class GreetingStrategy {
+  public:
+    virtual ~GreetingStrategy() {};
+    virtual void greet(const std::string& name) = 0;
+  };
+  
+  
+  class FormalGreetingStrategy : public GreetingStrategy {
+  public:
+    void greet(const std::string& name) {
+      cout << "Good morning " << name << ", how do you do?\n";
+    }
+  };
+  
+  
+  class NormalGreetingStrategy : public GreetingStrategy {
+  public:
+    void greet(const std::string& name) {
+      cout << "Hi " << name << ", how are you?\n";
+    }
+  };
+  
+  
+  class InformalGreetingStrategy : public GreetingStrategy {
+  public:
+    void greet(const std::string& name) {
+      cout << "Hey " << name << ", what's up?\n";
+    }
+  };
+  
+  
+  class Person {
+    GreetingStrategy* _greetingStrategy;
+  public:
+    Person(GreetingStrategy* greetingStrategy) :
+   _greetingStrategy(greetingStrategy) {};
+    ~Person() { delete _greetingStrategy; };
+    void greet(const std::string& name) {
+      _greetingStrategy->greet(name);
+    }
+  };
+
+  /*
+  class Person {
+  public:
+    virtual void greet(const std::string& name) = 0;
+  };
+ 
+  
+  class BusinessPerson : public Person {
+  public:
+    void greet(const std::string& name) {
+      cout << "Good morning " << name << ", how do you do?\n";
+    }
+  };
+
+
+  class NormalPerson : public Person {
+  public:
+    void greet(const std::string& name) {
+      cout << "Hi " << name << ", how are you?\n";
+    }
+  };
+  
+  
+  class CoolPerson : public Person {
+  public:
+    void greet(const std::string& name) {
+      cout << "Hey " << name << ", what's up?\n";
+    }
+  };
+
+  // Uh oh - code deuplication of BusinessPerson!
+  class Politician : public Person {
+  public:
+    void greet(const std::string& name) {
+      cout << "Good morning " << name << ", how do you do?\n";
+    };
+  };
+  */
+  
+  /* State method */
+  class State {
+  public:
+    virtual ~State() {};
+    virtual std::string getDescription() = 0;
+    virtual State* getNextState() = 0;
+  };
+
+
+  class PurchasedState : public State {
+    State* _nextState = nullptr;
+  public:
+    PurchasedState(State* nextState) : _nextState(nextState) {};
+    std::string getDescription() override {
+      return "Currnet State: PURCHASED - Will be shipping soon\n";
+    }
+    State* getNextState() override { return _nextState; };
+  };
+  
+  
+  class InTransitState : public State {
+    State* _nextState = nullptr;
+  public:
+    InTransitState(State* nextState) : _nextState(nextState) {};
+    std::string getDescription() override {
+      return "Currnet State: IN_TRANSIT - Your item is on the way\n";
+    }
+    State* getNextState() override { return _nextState; };
+  };
+  
+  
+  class DeliveredState : public State {
+    State* _nextState = nullptr;
+  public:
+    DeliveredState(State* nextState) : _nextState(nextState) {};
+    std::string getDescription() override {
+      return "Currnet State: DELIVERED - Your item has arrived\n";
+    }
+    State* getNextState() override { return _nextState; };
+  
+  };
+  
+
+  class Purchase {
+  private:
+    std::string _productName;
+    //std::string _currentState;
+    State* _currentState;
+  public:
+    Purchase(const std::string& productName,
+        State* initialState) : 
+      _productName(productName), 
+      _currentState(initialState/*"PURCHASED"*/) {};
+    
+    std::string getDescription() {
+      return _currentState->getDescription();
+      /*
+      std::string description = _productName + " - " +
+        _currentState + "\n";
+
+      if (_currentState == "PURCHASED") {
+        description += "Will be shipping soon\n";
+      } else if (_currentState == "IN_TRANSIT") {
+        description += "Your item is on the way\n";
+      } else if (_currentState == "DELIVERED") {
+        description += "Your item has arrived\n";
+      }
+
+      return description;
+      */
+    };
+
+    void goToNextState() {
+      if ( _currentState->getNextState() ) {
+        _currentState = _currentState->getNextState();
+      } else {
+        cout << "No more states!";
+      }
+      /*
+      if (_currentState == "PURCHASED") {
+        _currentState = "IN_TRANSIT";
+      } else if (_currentState == "IN_TRANSIT") {
+        _currentState = "DELIVERED";
+      } else if (_currentState == "DELIVERED") {
+        cout << "No more states!";
+      }
+      */
+    };
+  };
+
+
+  /* Interpreter method includes 
+   * 1. non-terminal expression
+   * 2. terminal expression */
+  class Expression {
+  public:
+    virtual ~Expression() {};
+    virtual int evaluate() = 0;
+  };
+
+  // non-terminal expression
+  class OperationExpression : public Expression {
+    std::string _operatorSymbol;
+    Expression* _leftHandSide;
+    Expression* _rightHandSide;
+  public:
+    OperationExpression(const std::string& operatorSymbol,
+        Expression* lhs, Expression* rhs) : 
+   _operatorSymbol(operatorSymbol), _leftHandSide(lhs),
+   _rightHandSide(rhs) {};
+
+    int evaluate() {
+      if (_operatorSymbol == "+") {
+        return _leftHandSide->evaluate() + 
+          _rightHandSide->evaluate();
+      } else if (_operatorSymbol == "-") {
+        return _leftHandSide->evaluate() - 
+          _rightHandSide->evaluate();
+      } else if (_operatorSymbol == "*") {
+        return _leftHandSide->evaluate() *
+          _rightHandSide->evaluate();
+      } else {
+        std::cout << "Unrecognized operator: " 
+                  << _operatorSymbol;
+        return 0;
+      }
+    };
+  };
+
+  // terminal expression
+  class NumberExpression : public Expression {
+    std::string _numberString;
+  public:
+    NumberExpression(const std::string& numberString) :
+   _numberString(numberString) {};
+    int evaluate() override {
+      return std::stoi(_numberString);
+    };
+  };
+
+  /* observer method includes
+   * 1. Publisher
+   * 2. Subscriber  */
+  class Subscriber {
+  public:
+    // for publishers to use
+    virtual ~Subscriber() {};
+    virtual void notify(const std::string& publisherName,
+                        const std::string& message) = 0;
+    virtual std::string getName() = 0;
+  };
+
+
+  class Publisher {
+  public:
+    virtual ~Publisher() {};
+    // for subscribers to use
+    virtual void subscribe(Subscriber* subscriber) = 0;
+    // for subscribers to use
+    virtual void unsubscribe(Subscriber* subscriber) = 0;
+    virtual void publish(const std::string& message) = 0;
+  };
+
+
+  class ChatGroup : public Publisher {
+  private:
+    std::string _groupName;
+    std::vector<Subscriber*> _subscribers;
+  public:
+    ChatGroup(const std::string& name) : _groupName(name) {};
+    // for subscribers to use
+    void subscribe(Subscriber* subscriber) override {
+      this->_subscribers.push_back(subscriber);
+    };
+    // for subscribers to use
+    void unsubscribe(Subscriber* subscriber) override {
+      _subscribers.erase(std::remove_if(
+            _subscribers.begin(), _subscribers.end(),
+            [subscriber](Subscriber* s) { return s->getName() == subscriber->getName(); }),
+            _subscribers.end());
+    };
+    void publish(const std::string& message) override {
+      for (auto subscriber : _subscribers) {
+        subscriber->notify(_groupName, message);
+      }
+    };
+  };
+
+
+  class ChatUser : public Subscriber {
+    std::string _userName;
+  public:
+    ChatUser(const std::string userName) : _userName(userName) {};
+    void notify(const std::string& publisherName,
+                const std::string& message) override {
+      cout << _userName << " received a new message from "
+           << publisherName << ": " << message << "\n";
+    };
+    std::string getName() override {
+      return _userName;
+    };
+  };
+
+
+  /* Mediator */
+  class Mediator {
+  public:
+    virtual void mediate(const std::string& event) = 0;
+  };
+
+
+  class InterfaceElement {
+  protected:
+    string _name;
+    bool _isVisible;
+    Mediator* _mediator;
+  public:
+    InterfaceElement(const std::string& name, 
+        bool isVisible, Mediator* mediator) : 
+      _name(name), _isVisible(isVisible), _mediator(mediator) {};
+    void setVisibility(bool isVisible) {
+      this->_isVisible = isVisible;
+    };
+    std::string getDescription() {
+      return (_isVisible ? 
+          (_name + " is visible") : (_name + " is Not visible"));
+    };
+  };
+
+
+  class ButtonElement : public InterfaceElement {
+  public:
+    ButtonElement(const std::string& name, 
+        bool isVisible, Mediator* mediator) :
+   InterfaceElement(name, isVisible, mediator) {};
+    virtual ~ButtonElement() {};
+    virtual void click() {
+      _mediator->mediate(_name + " clicked");
+    };
+  };
+
+
+  class TextBox : public InterfaceElement {
+  private:
+    std::string _textValue = "";
+  public:
+    TextBox(const std::string& name, 
+        bool isVisible, Mediator* mediator) :
+   InterfaceElement(name, isVisible, mediator) {};
+    virtual ~TextBox() {};
+    virtual void changeText(const std::string& newValue) {
+      _textValue = newValue;
+      if (newValue.empty()) {
+        _mediator->mediate(_name + " empty");
+      } else {
+        _mediator->mediate(_name + " not empty");
+      }
+    };
+  };
+
+
+  class CheckBox : public InterfaceElement {
+  private:
+    bool _isChecked = false;
+  public:
+    CheckBox(const std::string& name, 
+        bool isVisible, Mediator* mediator) : 
+   InterfaceElement(name, isVisible, mediator) {};
+    virtual ~CheckBox() {};
+    virtual void setIsChecked(bool isChecked) {
+      this->_isChecked = isChecked;
+      if (isChecked) {
+        _mediator->mediate(_name + " is checked");
+      } else {
+        _mediator->mediate(_name + " not unchecked");
+      }
+      
+    };
+  };
+
+  /*
+  class SubmitButton : public ButtonElement {
+  public:
+    SubmitButton() : ButtonElement("Submit button", false) {};
+    void click() override {
+      std::cout << "Submitted!";
+    };
+  };
+
+
+  class NameTextBox : public TextBox {
+    SubmitButton* _submitButton;
+  public:
+    NameTextBox(SubmitButton* submitButton) : 
+      TextBox("Name textbox", true), 
+      _submitButton(submitButton) {};
+      void changeText(const std::string& newValue) override {
+        if (newValue.empty()) {
+          _submitButton->setVisibility(false);
+        } else {
+          _submitButton->setVisibility(true);
+        }
+
+        TextBox::changeText(newValue);
+      };
+  };
+
+
+  class SpousesNameTextBox : public TextBox {
+  public:
+    SpousesNameTextBox() : 
+      TextBox("Spouses's name textbox", false) {};
+  };
+  
+  
+  class IsMarriedCheckBox : public CheckBox {
+  private:
+    SpousesNameTextBox* _spousesNameTextBox;
+  public:
+    IsMarriedCheckBox(SpousesNameTextBox* spousesNameTextBox) : 
+      CheckBox("Is married checkbox", true),
+      _spousesNameTextBox(spousesNameTextBox) {};
+    void setIsChecked(bool isChecked) override {
+      if (isChecked) {
+        _spousesNameTextBox->setVisibility(true);
+      } else {
+        _spousesNameTextBox->setVisibility(false);
+      }
+      CheckBox::setIsChecked(isChecked);
+    };
+  };
+*/
+
+  class UserInterface : public Mediator {
+  private:
+    TextBox* _nameTextBox;
+    CheckBox* _isMarriedCheckBox;
+    TextBox* _spousesNameTextBox;
+    ButtonElement* _submitButton;
+  public:
+    UserInterface() {
+      _nameTextBox = new TextBox("Name textbox", true, this);
+      _isMarriedCheckBox = new CheckBox("Is married checkbox", true, this);
+      _spousesNameTextBox = new TextBox("Spouse's name textxox", false, this);
+      _submitButton = new ButtonElement("Submit button", false, this);
+    };
+    
+    ~UserInterface() {
+      delete _nameTextBox;
+      delete _isMarriedCheckBox;
+      delete _spousesNameTextBox;
+      delete _submitButton;
+    };
+    
+    void mediate(const std::string& event) override {
+      cout << "Mediating event: " << event << "...\n";
+
+      if (event == "Name textbox is empty") {
+        _submitButton->setVisibility(false);
+      } else if (event == "Name textbox is not empty") {
+        _submitButton->setVisibility(true);
+      } else if (event == "Is married checkbox is checked") {
+        _isMarriedCheckBox->setVisibility(true);
+      } else if (event == "Is married checkbox is unchecked") {
+        _isMarriedCheckBox->setVisibility(false);
+      } else if (event == "Submit button clicked") {
+        std::cout << "Submitted\n";
+      } else {
+        std::cout << "Unrecognized event!\n";
+      }
+    };
+
+    TextBox* getNameTextBox() {return _nameTextBox;};
+    CheckBox* getIsMarriedCheckBox() {return _isMarriedCheckBox;};
+    TextBox* getSpousesNameTextBox() {return _spousesNameTextBox;};
+    ButtonElement* getSubmitButton() {return _submitButton;};
+  };
+  
+
+  /* Command */
   class Canvas {
   private:
     std::vector<std::string> _shapes;

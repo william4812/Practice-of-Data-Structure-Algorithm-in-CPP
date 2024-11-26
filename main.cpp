@@ -950,8 +950,8 @@ void testCommandMethod() {
   typedef BEHAVIORIAL_DP::Button Button;
   typedef BEHAVIORIAL_DP::AddShapeCommand AddShapeCommand;
   typedef BEHAVIORIAL_DP::ClearCommand ClearCommand;
+  
   Canvas* canvas = new Canvas;
-
   Button* addTriangleButton = new Button( new 
       AddShapeCommand("triangle", canvas));
   Button* addSquareButton = new Button( new 
@@ -971,11 +971,160 @@ void testCommandMethod() {
     vectorToString(canvas->getShapes()) << "\n";
   delete canvas;
 };
+  
+void testMediatorMethod() {
+  typedef BEHAVIORIAL_DP::UserInterface UserInterface;
+  UserInterface* ui = new UserInterface;
+  
+  BEHAVIORIAL_DP::InterfaceElement* elements[] = {
+    ui->getNameTextBox(),
+    ui->getIsMarriedCheckBox(),
+    ui->getSpousesNameTextBox(),
+    ui->getSubmitButton()
+  };
+
+  for (auto element: elements) {
+    std::cout << element->getDescription() << "\n";
+  }
+
+  ui->getIsMarriedCheckBox()->setIsChecked(true);
+  
+  for (auto element: elements) {
+    std::cout << element->getDescription() << "\n";
+  }
+
+};
+  
+void testObserverMethod() {
+  typedef BEHAVIORIAL_DP::ChatUser ChatUser;
+  ChatUser* user1 = new ChatUser("Jim");
+  ChatUser* user2 = new ChatUser("Barb");
+  ChatUser* user3 = new ChatUser("Hannah");
+
+  typedef BEHAVIORIAL_DP::ChatGroup ChatGroup;
+  ChatGroup* group1 = new ChatGroup("Gardening group");
+  ChatGroup* group2 = new ChatGroup("Dog-lovers group");
+
+  group1->subscribe(user1);
+  group1->subscribe(user2);
+  
+  group2->subscribe(user2);
+  group2->subscribe(user3);
+  
+  group1->publish("Special sale on gardening supplies!");
+  group2->publish("It's national dog day everyong!");
+
+  delete user1;
+  delete user2;
+  delete user3;
+  delete group1;
+  delete group2;
+};
+  
+void testInterpreterMethod() {
+  typedef BEHAVIORIAL_DP::NumberExpression NumberExpression;
+  typedef BEHAVIORIAL_DP::OperationExpression OperationExpression;
+  
+  NumberExpression* five = new NumberExpression("5");
+  NumberExpression* seven = new NumberExpression("7");
+  OperationExpression* fivePlusSeven = new 
+    OperationExpression("+", five, seven);
+
+  cout << "Five plus seven is: " 
+       << fivePlusSeven->evaluate()
+       << "\n";
+
+  NumberExpression* thirteen = new NumberExpression("13");
+  OperationExpression* complexOp = new 
+    OperationExpression("-", thirteen, fivePlusSeven);
+  
+  cout << "13 - ( 5 + 7) = " 
+       << complexOp->evaluate()
+       << "\n";
+  
+  OperationExpression* complexOp2 = new 
+    OperationExpression("*", thirteen, fivePlusSeven);
+  
+  cout << "13 * ( 5 + 7) = " 
+       << complexOp2->evaluate()
+       << "\n";
+
+
+  delete five;
+  delete seven;
+  delete fivePlusSeven;
+};
+  
+void testStateMethod() {
+  typedef BEHAVIORIAL_DP::DeliveredState DeliveredState;
+  typedef BEHAVIORIAL_DP::InTransitState InTransitState;
+  typedef BEHAVIORIAL_DP::PurchasedState PurchasedState;
+  typedef BEHAVIORIAL_DP::Purchase Purchase;
+
+  DeliveredState* deliveredState = new DeliveredState(nullptr);
+  InTransitState* inTransitState = new InTransitState(deliveredState);
+  PurchasedState* purchasedState = new PurchasedState(inTransitState);
+
+  Purchase* purchase = new Purchase("Shoes", purchasedState);
+  cout << purchase->getDescription() << "\n";
+
+  purchase->goToNextState();
+  cout << purchase->getDescription() << "\n";
+  
+  purchase->goToNextState();
+  cout << purchase->getDescription() << "\n";
+
+  delete deliveredState;
+  delete inTransitState;
+  delete purchasedState;
+  delete purchase;
+};
+
+void testStrategyMethod() {
+  typedef BEHAVIORIAL_DP::Person Person;
+  typedef BEHAVIORIAL_DP::FormalGreetingStrategy FormalGreetingStrategy;
+  typedef BEHAVIORIAL_DP::NormalGreetingStrategy NormalGreetingStrategy;
+  typedef BEHAVIORIAL_DP::InformalGreetingStrategy InformalGreetingStrategy;
+
+  Person businessPerson(new FormalGreetingStrategy());  
+  Person normalPerson(new NormalGreetingStrategy());  
+  Person coolPerson(new InformalGreetingStrategy());  
+  Person politician(new FormalGreetingStrategy());
+
+  const std::string& name = "Shaun";
+
+  cout << "The businessperson says: ";
+  businessPerson.greet(name);  
+  
+  cout << "The normal person says: ";
+  normalPerson.greet(name);  
+  
+  cout << "The cool person says: ";
+  coolPerson.greet(name);  
+  
+  cout << "The politician says: ";
+  politician.greet(name);  
+
+};
 
 int testBehavioralDP() {
+  // Strategy method
+  testStrategyMethod();
+  
+  // State method
+  //testStateMethod();
+  
+  // Interpreter  method
+  //testInterpreterMethod();
+  
+  // Observer method
+  //testObserverMethod();
+  
+  // Mediator method
+  //testMediatorMethod();
   
   // Command method
-  testCommandMethod();
+  //testCommandMethod();
   
   // Chain of responsibility method
   //testChainOfResponsibilityMethod();
