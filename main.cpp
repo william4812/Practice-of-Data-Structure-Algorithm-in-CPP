@@ -1106,10 +1106,145 @@ void testStrategyMethod() {
   politician.greet(name);  
 
 };
+  
+void testTemplateMethod() {
+  typedef BEHAVIORIAL_DP::GreetingCardTemplate GreetingCardTemplate;
+  typedef BEHAVIORIAL_DP::BirthdayCardTemplate BirthdayCardTemplate;
+  typedef BEHAVIORIAL_DP::NewYearCardTemplate NewYearCardTemplate;
+
+  GreetingCardTemplate gct;
+  BirthdayCardTemplate bct;
+  NewYearCardTemplate nct;
+
+  const std::string addresseeName = "Michael";
+  const std::string senderName = "Jordan";
+
+  cout << "Here is a regular greeting card:\n\n" 
+       << gct.generate(addresseeName, senderName);
+  cout << "Here is a birthday card:\n\n" 
+       << bct.generate(addresseeName, senderName);
+  cout << "Here is a new year's card:\n\n" 
+       << nct.generate(addresseeName, senderName);
+};
+  
+void testVisitorMethod() {
+  typedef BEHAVIORIAL_DP::DatabaseVisitor DatabaseVisitor;
+  typedef BEHAVIORIAL_DP::TextFileVisitor TextFileVisitor;
+  typedef BEHAVIORIAL_DP::PersonV PersonV;
+  typedef BEHAVIORIAL_DP::LandmarkV LandmarkV;
+  typedef BEHAVIORIAL_DP::CarV CarV;
+
+  DatabaseVisitor* dBV = new DatabaseVisitor;
+  TextFileVisitor* tFV = new TextFileVisitor;
+
+  const std::string name = "Michael";
+  const int age = 23;
+  PersonV  player(name, age);
+  player.accept(dBV);
+
+  const std::string state = "Ohio";
+  const std::string cityName = "Pickerington";
+  LandmarkV  place(state, cityName);
+  place.accept(tFV);
+
+  const std::string make = "Porsche";
+  const std::string model = "911 Turbo s";
+  CarV  car(make, model);
+  car.accept(dBV);
+
+  delete dBV;
+  delete tFV;
+};
+  
+void testIteratorMethod() {
+  typedef BEHAVIORIAL_DP::NumberIterator NumberIterator;
+  typedef BEHAVIORIAL_DP::NumberCollection NumberCollection;
+
+  std::vector<int> numbers {1,2,3,4,5,6,7};
+  NumberCollection nc(numbers);
+  NumberIterator* fi = nc.getForwardsIterator();
+  NumberIterator* bi = nc.getBackwardsIterator();
+
+  cout << "\n\nIterating through the numbers forwards:\n";
+  while (!fi->isFinished()) cout << fi->next() << ",";
+  cout << "\n\nIterating through the numbers backwards:\n";
+  while (!bi->isFinished()) cout << bi->next() << ",";
+  cout << "\n";
+
+  delete fi;
+  delete bi;
+};
+  
+void testMementoMethod() {
+  typedef BEHAVIORIAL_DP::CanvasM Canvas;
+  Canvas* canvas = new Canvas;
+
+  canvas->addShape("rhombus");
+  canvas->addShape("triangle");
+  canvas->addShape("square");
+  canvas->addShape("circle");
+
+  for (auto shape : canvas->getShapes()) {
+    cout << shape << ", ";
+  }
+  cout << "\n"; 
+
+  canvas->undo();
+
+  for (auto shape : canvas->getShapes()) {
+    cout << shape << ", ";
+  }
+  cout << "\n"; 
+  
+  canvas->addShape("rhombus");
+  canvas->addShape("triangle");
+  canvas->addShape("square");
+  canvas->addShape("circle");
+  canvas->undo();
+
+  for (auto shape : canvas->getShapes()) {
+    cout << shape << ", ";
+  }
+  cout << "\n"; 
+
+  delete canvas;
+};
+  
+void testNullObjectMethod() {
+  typedef BEHAVIORIAL_DP::SomeTask SomeTask;
+  typedef BEHAVIORIAL_DP::ConsoleLogger ConsoleLogger;
+  typedef BEHAVIORIAL_DP::FileLogger FileLogger;
+  typedef BEHAVIORIAL_DP::ApiLogger ApiLogger;
+
+  SomeTask task1(new ConsoleLogger);
+  SomeTask task2(new FileLogger("logs.txt"));
+  SomeTask task3(new ApiLogger("loggingsite.com/api/logs"));
+  SomeTask task4;
+
+  task1.execute();
+  task2.execute();
+  task3.execute();
+  task4.execute();
+};
 
 int testBehavioralDP() {
+  // Null object method
+  testNullObjectMethod();
+  
+  // Memento method
+  //testMementoMethod();
+  
+  // Iterator method
+  //testIteratorMethod();
+  
+  // Visitor method
+  //testVisitorMethod();
+  
+  // Template method
+  //testTemplateMethod();
+
   // Strategy method
-  testStrategyMethod();
+  //testStrategyMethod();
   
   // State method
   //testStateMethod();

@@ -37,6 +37,309 @@ using namespace std;
 namespace BEHAVIORIAL_DP {
 
 
+  /* Null object */
+  class Logger {
+  public:
+    virtual ~Logger() {};
+    virtual void log(const std::string& message) = 0;
+  };
+  
+  
+  class ConsoleLogger : public Logger {
+  public:
+    void log(const std::string& message) override {
+      cout << message << "\n";
+    };
+  };
+
+  
+  class FileLogger : public Logger {
+    std::string _filePath;
+  public:
+    FileLogger(const std::string& filePath) : _filePath(filePath) {};
+    void log(const std::string& message) override {
+      cout << "Printing message to file " << _filePath << ": "
+           << message << "\n";
+    };
+  };
+
+  
+  class ApiLogger : public Logger {
+    std::string _url;
+  public:
+    ApiLogger(const std::string& url) : _url(url) {};
+    void log(const std::string& message) override {
+      cout << "Sending message to api " << _url << ": "
+           << message << "\n";
+    };
+  };
+  
+  
+  class NullLogger : public Logger {
+  public:
+    void log(const std::string& message) override {
+      cout << "do nothing..." << message << endl;
+    };
+  };
+
+
+  class SomeTask {
+    Logger* _logger = nullptr;
+  public:
+    SomeTask() {
+      _logger = new NullLogger;
+    };
+    SomeTask(Logger* logger) : _logger(logger) {};
+    ~SomeTask() { delete _logger; };
+    void execute() {
+      // Do some stuff...
+      if (_logger) {
+        _logger->log("Did some stuff\n");
+      }
+
+      // Do some other stuff...
+      if (_logger) {
+        _logger->log("Did some other stuff\n");
+      }
+
+      // One last thing...
+      if (_logger) {
+        _logger->log("Task complete!\n");
+      }
+
+    }
+  };
+  
+  
+  /* Memento method */
+  class CanvasM; // reused in previous example
+  class CanvasMemento {
+    friend class CanvasM;
+    const std::vector<std::string> _shapes;
+  public:
+    CanvasMemento(std::vector<std::string> shapes) : _shapes(shapes) {};
+  };
+
+
+  class CanvasM {
+  private:
+    std::vector<std::string> _shapes;
+    std::vector<CanvasMemento*> _oldStates;
+  public:
+    ~CanvasM() {
+      for (auto p : _oldStates) {
+        delete p;
+      }  
+    };
+    void addShape(const std::string& newShape) {
+      _oldStates.push_back(new CanvasMemento(_shapes));
+      _shapes.push_back(newShape);
+    };
+    void undo() {
+      CanvasMemento* previousState = _oldStates.back();
+      _oldStates.pop_back();
+      _shapes = previousState->_shapes;
+      delete previousState;
+    };
+    void clearAll() {
+      _shapes.clear(); // empty _shapes vector
+    };
+    std::vector<std::string> getShapes() {return _shapes; };
+  };
+
+  /* Iterator method */
+  class NumberIterator {
+  public:
+    virtual ~NumberIterator() {};
+    virtual int next() = 0;
+    virtual bool isFinished() = 0;
+  };
+  
+  class ForwardsIterator : public NumberIterator {
+  private:
+    int _currentPosition;
+    std::vector<int> _numbers;
+  public:
+    ForwardsIterator(std::vector<int>& numbers) : _numbers(numbers) {};
+    int next() override {
+      int current = _numbers.at(_currentPosition);
+      _currentPosition += 1;
+      return current;
+    };
+    bool isFinished() {
+      return (_currentPosition >= (int)_numbers.size());
+    };
+  };
+  
+  
+  class BackwardsIterator : public NumberIterator {
+  private:
+    int _currentPosition;
+    std::vector<int> _numbers;
+  public:
+    BackwardsIterator(std::vector<int>& numbers) : _numbers(numbers) {};
+    int next() override {
+      int current = 
+        _numbers.at((int)_numbers.size() - _currentPosition - 1);
+      _currentPosition += 1;
+      return current;
+    };
+    bool isFinished() {
+      return (_currentPosition >= (int)_numbers.size());
+    };
+  };
+  
+
+  class NumberCollection {
+  private:
+    std::vector<int> _numbers;
+  public:
+    NumberCollection(const std::vector<int>& numbers) : 
+      _numbers(numbers) {};
+    NumberIterator* getForwardsIterator() {
+      return (new ForwardsIterator(_numbers));
+    }
+    NumberIterator* getBackwardsIterator() {
+      return (new BackwardsIterator(_numbers));
+    }
+  }; 
+
+  /* Visitor method */
+  class Visitor {
+  public:
+    virtual ~Visitor() {};
+    virtual void handlePersonV(const std::string& name,
+        const int& age) = 0;
+    virtual void handleLandmarkV(
+        const std::string& name, 
+        const std::string& cityName) = 0;
+    virtual void handleCarV(
+        const std::string& make, 
+        const std::string& model) = 0;
+  };
+
+
+  class DatabaseVisitor : public Visitor {
+  public:
+    void handlePersonV(const std::string& name,
+        const int& age) override {
+      cout << "Writing preson to database: " 
+           << name << ", " << age << "\n";
+    };
+    void handleLandmarkV(
+        const std::string& name, 
+        const std::string& cityName) override {
+      cout << "Writing landmark to database: " 
+           << name << ", " << cityName << "\n";
+    };
+    virtual void handleCarV(
+        const std::string& make, 
+        const std::string& model) {
+      cout << "Writing car to database: " 
+           << make << ", " << model << "\n";
+    };
+  };
+  
+  
+  class TextFileVisitor : public Visitor {
+  public:
+    void handlePersonV(const std::string& name,
+        const int& age) override {
+      cout << "Writing preson to file: " 
+           << name << ", " << age << "\n";
+    };
+    void handleLandmarkV(
+        const std::string& name, 
+        const std::string& cityName) override {
+      cout << "Writing landmark to file: " 
+           << name << ", " << cityName << "\n";
+    };
+    virtual void handleCarV(
+        const std::string& make, 
+        const std::string& model) {
+      cout << "Writing car to file: " 
+           << make << ", " << model << "\n";
+    };
+  };
+  
+  
+  class PersonV {
+  private:
+    std::string _name;
+    int _age;
+  public:
+    PersonV(const std::string& name, const int& age) :
+      _name(name), _age(age) {};
+    void accept(Visitor* v) { v->handlePersonV(_name, _age); };
+  };
+  
+  
+  class LandmarkV {
+  private:
+    std::string _name;
+    std::string _cityName;
+  public:
+    LandmarkV(const std::string& name, const std::string& cityName) :
+      _name(name), _cityName(cityName) {};
+    void accept(Visitor* v) { v->handleLandmarkV(_name, _cityName); };
+  };
+ 
+  
+  class CarV {
+  private:
+    std::string _make;
+    std::string _model;
+  public:
+    CarV(const std::string& make, const std::string& model) :
+      _make(make), _model(model) {};
+    void accept(Visitor* v) { v->handleCarV(_make, _model); };
+  };
+
+
+  /* Template method */
+  class GreetingCardTemplate {
+  protected:
+    virtual std::string intro(const std::string& addresseeName) {
+      return "Dear " + addresseeName + ",\n";
+    };
+    virtual std::string occasion() {
+      return "Just writing to say hi! Hope all is \
+well with you.\n";
+    };
+    virtual std::string closing(const std::string& senderName) {
+      return "Sincerely,\n" + senderName + "\n";
+    };
+  public:
+    std::string generate(const std::string& addresseeName,
+        const std::string& senderName) {
+      return intro(addresseeName) + 
+             occasion() +
+             closing(senderName); 
+    };
+  };
+
+  
+  class BirthdayCardTemplate : public GreetingCardTemplate {
+  protected:
+    std::string occasion() override {
+      return "Happy birthday!! Hope you have a \
+wonderful day and lots of cake.\n";
+    };
+  };
+  
+  
+  class NewYearCardTemplate : public GreetingCardTemplate {
+  protected:
+    std::string intro(const std::string& addresseeName) override {
+      return addresseeName + "!!!\n";
+    };
+    virtual std::string occasion() override {
+      return "Happy New Years!!!! See you at the \
+gym tomorrow!\n";
+    };
+  };
+
+
   /* Strategy method */
   class GreetingStrategy {
   public:
